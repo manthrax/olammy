@@ -441,8 +441,8 @@ fetchModels( (data) => {
     );
 }
 , () => {
-    setHidden(divider);
-    setHidden(chatPanel);
+    setVisible(divider);
+    setVisible(chatPanel);
     leftPane.style.width = '100%';
 }
 );
