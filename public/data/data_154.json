@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a grid of points\n    vec2 st = fract(uv * 50.0);\n    \n    // Calculate distance to nearest point\n    float d = length(st - 0.5);\n    \n    // Add some movement using sine waves\n    vec2 g = floor(uv * 50.0);\n    g.y += sin(iTime + g.x) * 0.5;\n    float m = length(fract(g) - uv);\n    \n    // Create color transition from red to blue\n    vec3 col = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), (sin(iTime) + 1.0)/2.0);\n    \n    // Add some noise for variation\n    float n = turbulent(uv * 10.0 + iTime);\n    \n    // Create the final effect with glow\n    vec3 finalCol = mix(vec3(0.0), col, smoothstep(0.05, 0.0, d + n));\n    \n    return vec4(finalCol, 1.0);\n}"
+}

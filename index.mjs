@@ -1,194 +1,174 @@
-import express from 'express';
-import ollama from 'ollama';
-import multer from 'multer';
-import fs from 'fs';
-import path from 'path';
+// server.mjs
 
-const app = express();
-const PORT = 3000;
-// Change this to your desired port
-
-app.use(express.json());
-// Middleware to parse JSON requests
-app.use(express.static('public'));
-
-app.post('/chat', async (req, res) => {
-    const system = req.body.system;
-    const model = req.body.model || 'deepseek-r1:32b';
-    const message = req.body.message || 'Hello!';
-    const messages = req.body.messages || [{
-        role: 'user',
-        content: message
-    }];
-    /*
+/*
 deepseek-r1:1.5b    --- looped forever
 deepseek-r1:7b      --- terrible.
 deepseek-r1:14b     --- can occasionally write good code 1 out of 4
 deepseek-r1:32b     --- writes good code 2 out of 3 times...
 deepseek-r1:70b     --- wrote good code 1st try but took about 10 minutes...
-
-//'deepseek-r1:32b',//''deepseek-r1:32b',
-
 */
-    let controller = new AbortController();
 
 
-    
-    try {
-        console.log("sending:", system, model, message)
-        res.setHeader('Content-Type', 'text/plain');
+import express from 'express';
+import ollama from 'ollama';
+import multer from 'multer';
+import { promises as fs, existsSync } from 'fs';
+import { dirname, join, extname, basename } from 'path';
+import { fileURLToPath } from 'url';
 
-        const responseStream = await ollama.chat({
-            model,
-            messages,
-            //system,
-            stream: true,
-            timeout: 30000,
-            signal: controller.signal,
-            options: {
-                seed: 123,
-                //temperature: 0.01
-                temperature: 0.1,
-                // Stick to predictable GLSL outputs
-                
-                max_tokens: 1000,
-                // Prevent long responses
-                top_k: 20,
-                // Reduce random token choices
-                top_p: 0.8,
-                // Balance predictability and variation
-                //stop: ["vec4"]      // Stop when another function starts                
-                //stop:
-            }
-        });
+// Setup __dirname in ESM
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-        // Detect when the client disconnects
-        req.on('close', () => {
-            console.log("Client disconnected, stopping stream.");
-            responseStream.return();
-            // Stop async generator
-            controller.abort();
-            controller = null;
-        }
-        );
+const app = express();
+const PORT = 3000;
 
-        for await(const chunk of responseStream) {
-            res.write(chunk.message.content);
-            if(!controller)
-                break;
-        }
-        res.end();
-    } catch (error) {
-        if (error.name === 'AbortError') {
-            console.log('Request aborted due to client disconnect.');
-        } else if (!res.writableEnded) {
-            console.error('Error during chat processing:', error);
-            res.status(500).json({
-                error: error.message
-            });
-        }
-    }
-}
-);
+// Parse JSON from requests & serve static files in 'public'
+app.use(express.json());
+app.use(express.static('public'));
 
-app.listen(PORT, () => {
-    console.log(`Chatbot server running on http://localhost:${PORT}`);
-}
-);
-//-----------
-//report installed models...
-app.get('/models', async (req, res) => {
-    try {
-        const models = await ollama.list();
-        res.json(models);
-    } catch (error) {
-        res.status(500).json({
-            error: error.message
-        });
-    }
-}
-);
+// Serve /data/* from the 'data' folder
+//app.use('/data', express.static(join(__dirname, 'data')));
 
-//-----------------   FILE SAVE
-let uploadDir = 'data/'
+// ------------------- Chat Route -------------------
+app.post('/chat', async (req, res) => {
+  const system = req.body.system;
+  const model = req.body.model || 'deepseek-r1:32b';
+  const message = req.body.message || 'Hello!';
+  const messages = req.body.messages || [{ role: 'user', content: message }];
 
-app.use(express.static(uploadDir))
+  let controller = new AbortController();
 
+  try {
+    console.log("sending:", system, model, message);
+    res.setHeader('Content-Type', 'text/plain');
 
-
-// Function to generate an auto-incrementing filename
-const getNextFilename = (originalname) => {
-    const ext = path.extname(originalname);
-    const baseName = path.basename(originalname, ext);
-
-    let counter = 1;
-    let newFilename = `${baseName}_${counter}${ext}`;
-    
-    while (fs.existsSync(path.join(uploadDir, newFilename))) {
-        counter++;
-        newFilename = `${baseName}_${counter}${ext}`;
-    }
-
-    return newFilename;
-};
-
-// Set up storage directory and Multer configuration
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename: function(req, file, cb) {
-        const newFilename = getNextFilename(file.originalname);
-        console.log("Saving user generated JSON as:",newFilename)
-        cb(null, newFilename) // file.originalname);
-    }
-});
-
-const upload = multer({
-    storage: storage
-});
-
-app.post('/upload', upload.single('file'), (req, res) => {
-    res.status(201).send('File uploaded successfully');
-}
-);
-
-// Serve directory contents
-app.get('/files', (req, res) => {
-    fs.readdir(uploadDir, (err, files) => {
-        if (err) {
-            return res.status(500).json({ error: 'Unable to list files' });
-        }
-        res.json(files);
+    const responseStream = await ollama.chat({
+      model,
+      messages,
+      stream: true,
+      timeout: 30000,
+      signal: controller.signal,
+      options: {
+        seed: 123,
+        temperature: 0.1,
+        max_tokens: 1000,
+        top_k: 20,
+        top_p: 0.8
+      }
     });
+
+    // If client disconnects, abort the stream
+    req.on('close', () => {
+      console.log("Client disconnected, stopping stream.");
+      responseStream.return();
+      controller.abort();
+      controller = null;
+    });
+
+    for await (const chunk of responseStream) {
+      if (!controller) break; // If aborted, stop writing
+      res.write(chunk.message.content);
+    }
+    res.end();
+
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.log('Request aborted due to client disconnect.');
+    } else if (!res.writableEnded) {
+      console.error('Error during chat processing:', error);
+      res.status(500).json({ error: error.message });
+    }
+  }
 });
 
-app.get('/files/:filename', (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, 'data', filename);
+// ------------------- Models Route -------------------
+app.get('/models', async (req, res) => {
+  try {
+    const models = await ollama.list();
+    res.json(models);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        res.status(404).send('File not found');
-    }
+// ------------------- File Upload & Listing -------------------
+const uploadDir = 'public/data'; // or 'data/'
+
+// Rebuild data.json with updated directory listing
+async function rebuildDirectoryJSON() {
+  try {
+    const directoryPath = join(__dirname, uploadDir);
+    const files = await fs.readdir(directoryPath);
+    const outputPath = join(__dirname, 'public', 'data.json');
+    await fs.writeFile(outputPath, JSON.stringify(files, null, 2), 'utf8');
+    console.log('File list saved to data.json successfully.');
+  } catch (err) {
+    console.error('Error processing directory:', err);
+  }
 }
-);
 
-app.post('/upload-json', (req, res) => {
+rebuildDirectoryJSON()
+
+// Auto-incrementing filename if file already exists
+function getNextFilename(originalname) {
+  const ext = extname(originalname);
+  const baseName = basename(originalname, ext);
+
+  let counter = 1;
+  let newFilename = `${baseName}_${counter}${ext}`;
+  while (existsSync(join(uploadDir, newFilename))) {
+    counter++;
+    newFilename = `${baseName}_${counter}${ext}`;
+  }
+  return newFilename;
+}
+
+// Multer config
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const newFilename = getNextFilename(file.originalname);
+    console.log("Saving user file as:", newFilename);
+    cb(null, newFilename);
+  }
+});
+const upload = multer({ storage });
+
+// Upload endpoint
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.status(201).send('File uploaded successfully');
+  rebuildDirectoryJSON();
+});
+
+/*
+// List all files in the uploadDir
+app.get('/files', async (req, res) => {
+  try {
+    const files = await fs.readdir(uploadDir);
+    res.json(files);
+  } catch (err) {
+    res.status(500).json({ error: 'Unable to list files' });
+  }
+});
+*/
+
+// Save JSON via POST
+app.post('/upload-json', async (req, res) => {
+  try {
     const jsonData = req.body;
-    const filePath = path.join(__dirname, 'data', 'jsonData.json');
-    // Save JSON data as jsonData.json
-    jsonData.filePath = filePath;
-    fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.error('Error writing JSON to file:', err);
-            res.status(500).send('Error saving JSON');
-        } else {
-            console.log('Wrote JSON to file:', filePath);
-            res.send(`${filePath}`);
-        }
-    }
-    );
-}
-);
+    const filePath = join(__dirname, uploadDir, 'jsonData.json');
+    await fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), 'utf8');
+    console.log('Wrote JSON to file:', filePath);
+    res.send(filePath);
+  } catch (err) {
+    console.error('Error writing JSON to file:', err);
+    res.status(500).send('Error saving JSON');
+  }
+});
+
+// ------------------- Start Server -------------------
+app.listen(PORT, () => {
+  console.log(`Chatbot server running on http://localhost:${PORT}`);
+});

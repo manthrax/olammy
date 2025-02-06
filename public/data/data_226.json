@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    float time = iTime * 1.5; // Speed parameter\n    \n    // Create rotating hexagon pattern\n    vec2 pos = uv * 2.0 - 1.0;\n    float angle = atan(pos.y, pos.x) + time;\n    float radius = length(pos);\n    \n    // Add turbulence for expanding rings effect\n    float ringEffect = turbulent(vec3(pos * 5.0, time)) * 0.5;\n    float hexPattern = sin(6.0 * (angle - time)) * 0.5 + 0.5;\n    \n    // Combine patterns and add color transitions\n    float combined = min(hexPattern, ringEffect);\n    vec3 color = hsl2rgb(vec3(fract(time * 0.1), 1.0, 0.8));\n    \n    // Add noise to colors for dynamic effect\n    color += noise(vec3(pos * 4.0, time)) * 0.2;\n    \n    return vec4(combined * color + (1.0 - combined) * 0.2, 1.0);\n}"
+}

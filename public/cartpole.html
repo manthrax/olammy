@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CartPole DQN with Three.js</title>
+  <!-- TensorFlow.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0/dist/tf.min.js"></script>
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #overlay { position: absolute; top: 10px; left: 10px; color: #fff; z-index: 100; }
+  </style>
+</head>
+<body>
+  <div id="overlay">Training in progress...</div>
+  <script>
+    /***********************
+     * CART-POLE ENVIRONMENT
+     ***********************/
+    class CartPole {
+      constructor() {
+        // Physics constants (rough approximations)
+        this.gravity = 9.8;
+        this.massCart = 1.0;
+        this.massPole = 0.1;
+        this.totalMass = this.massCart + this.massPole;
+        this.length = 0.5;  // half-length of the pole
+        this.forceMag = 10.0;
+        this.tau = 0.02;    // time step
+
+        // Angle limits and thresholds
+        this.thetaThresholdRadians = 12 * Math.PI / 180;
+        this.xThreshold = 2.4;
+
+        this.reset();
+      }
+
+      reset() {
+        // state: [x, x_dot, theta, theta_dot]
+        this.state = [
+          Math.random() * 0.1 - 0.05,
+          Math.random() * 0.1 - 0.05,
+          Math.random() * 0.1 - 0.05,
+          Math.random() * 0.1 - 0.05
+        ];
+        return this.state;
+      }
+
+      step(action) {
+        // Action is 0 (left) or 1 (right)
+        const force = action === 1 ? this.forceMag : -this.forceMag;
+        let [x, x_dot, theta, theta_dot] = this.state;
+
+        // For readability, precompute some common terms
+        const costheta = Math.cos(theta);
+        const sintheta = Math.sin(theta);
+        const temp = (force + this.massPole * this.length * theta_dot * theta_dot * sintheta) / this.totalMass;
+
+        // Angular acceleration
+        const thetaacc = (this.gravity * sintheta - costheta * temp) /
+                         (this.length * (4.0/3.0 - this.massPole * costheta * costheta / this.totalMass));
+        // Linear acceleration
+        const xacc = temp - this.massPole * this.length * thetaacc * costheta / this.totalMass;
+
+        // Update the four state variables using Euler integration
+        x += this.tau * x_dot;
+        x_dot += this.tau * xacc;
+        theta += this.tau * theta_dot;
+        theta_dot += this.tau * thetaacc;
+
+        this.state = [x, x_dot, theta, theta_dot];
+
+        // Reward is 1 for every step the pole is still balanced
+        const done = (x < -this.xThreshold || x > this.xThreshold ||
+                      theta < -this.thetaThresholdRadians || theta > this.thetaThresholdRadians);
+        const reward = done ? 0 : 1;
+
+        return { state: this.state, reward, done };
+      }
+    }
+
+    /******************************
+     * DEEP Q-NETWORK (DQN) SETUP
+     ******************************/
+    const numStates = 4;   // [x, x_dot, theta, theta_dot]
+    const numActions = 2;  // left, right
+
+    function createQModel() {
+      const model = tf.sequential();
+      model.add(tf.layers.dense({inputShape: [numStates], units: 24, activation: 'relu'}));
+      model.add(tf.layers.dense({units: 24, activation: 'relu'}));
+      model.add(tf.layers.dense({units: numActions}));
+      model.compile({optimizer: tf.train.adam(0.001), loss: 'meanSquaredError'});
+      return model;
+    }
+
+    const qModel = createQModel();
+    const targetQModel = createQModel();
+    // Initialize target model weights
+    targetQModel.setWeights(qModel.getWeights());
+
+    /***********************************
+     * HYPERPARAMETERS & EXPERIENCE REPLAY
+     ***********************************/
+    const gamma = 0.95;
+    let epsilon = 1.0;       // exploration rate
+    const epsilonMin = 0.01;
+    const epsilonDecay = 0.995;
+    const maxEpisodes = 30;
+    const maxSteps = 20;
+    const batchSize = 32;
+    const replayBuffer = [];
+    const maxBufferSize = 2000;
+
+    function addExperience(experience) {
+      if (replayBuffer.length >= maxBufferSize) {
+        replayBuffer.shift();
+      }
+      replayBuffer.push(experience);
+    }
+
+    async function trainOnBatch() {
+      if (replayBuffer.length < batchSize) return;
+      const batch = [];
+      for (let i = 0; i < batchSize; i++) {
+        batch.push(replayBuffer[Math.floor(Math.random() * replayBuffer.length)]);
+      }
+      const states = tf.tensor2d(batch.map(exp => exp.state));
+      const nextStates = tf.tensor2d(batch.map(exp => exp.nextState));
+      const qValsNext = targetQModel.predict(nextStates);
+      const qValsNextArray = await qValsNext.array();
+      const targetQs = batch.map((exp, index) => {
+        if (exp.done) {
+          return exp.reward;
+        } else {
+          return exp.reward + gamma * Math.max(...qValsNextArray[index]);
+        }
+      });
+
+      const qValues = qModel.predict(states);
+      const qValuesArray = await qValues.array();
+      const updatedQ = qValuesArray.map((q, i) => {
+        q = q.slice(); // copy
+        q[batch[i].action] = targetQs[i];
+        return q;
+      });
+
+      const xTrain = states;
+      const yTrain = tf.tensor2d(updatedQ);
+      await qModel.fit(xTrain, yTrain, {epochs: 1, verbose: 0});
+
+      tf.dispose([states, nextStates, qValsNext, qValues, yTrain]);
+    }
+
+    /********************
+     * TRAINING LOOP
+     ********************/
+    async function trainAgent() {
+      const env = new CartPole();
+      for (let episode = 0; episode < maxEpisodes; episode++) {
+        let state = env.reset();
+        let totalReward = 0;
+        for (let step = 0; step < maxSteps; step++) {
+          // Choose action: epsilon-greedy
+          let action;
+          if (Math.random() < epsilon) {
+            action = Math.floor(Math.random() * numActions);
+          } else {
+            const stateTensor = tf.tensor2d([state]);
+            const qVals = qModel.predict(stateTensor);
+            const qArray = await qVals.array();
+            action = qArray[0].indexOf(Math.max(...qArray[0]));
+            tf.dispose([stateTensor, qVals]);
+          }
+
+          const { state: nextState, reward, done } = env.step(action);
+          totalReward += reward;
+          addExperience({state, action, reward, nextState, done});
+          state = nextState;
+
+          await trainOnBatch();
+
+          if (done) break;
+        }
+
+        // Update target network every episode
+        targetQModel.setWeights(qModel.getWeights());
+
+        // Decay epsilon
+        if (epsilon > epsilonMin) epsilon *= epsilonDecay;
+
+        console.log(`Episode ${episode+1}: total reward = ${totalReward}, epsilon = ${epsilon.toFixed(3)}`);
+      }
+      document.getElementById("overlay").innerText = "Training complete! Running simulation...";
+      runSimulation();
+    }
+
+    /*******************************
+     * THREE.JS VISUALIZATION SETUP
+     *******************************/
+    let scene, camera, renderer, cartMesh, poleMesh, groundMesh;
+    const simEnv = new CartPole();
+    function initThree() {
+      // Create scene, camera, and renderer
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      renderer = new THREE.WebGLRenderer({antialias: true});
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      
+      // Ground
+      const groundGeo = new THREE.PlaneGeometry(10, 10);
+      const groundMat = new THREE.MeshBasicMaterial({color: 0x555555, side: THREE.DoubleSide});
+      groundMesh = new THREE.Mesh(groundGeo, groundMat);
+      groundMesh.rotation.x = Math.PI / 2;
+      scene.add(groundMesh);
+
+      // Cart: Represented as a box
+      const cartGeo = new THREE.BoxGeometry(0.4, 0.2, 0.2);
+      const cartMat = new THREE.MeshBasicMaterial({color: 0x00ff00});
+      cartMesh = new THREE.Mesh(cartGeo, cartMat);
+      scene.add(cartMesh);
+
+      // Pole: Represented as a thin box
+      const poleGeo = new THREE.BoxGeometry(0.05, 1, 0.05);
+      const poleMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+      poleMesh = new THREE.Mesh(poleGeo, poleMat);
+      // Set pivot point at the bottom of the pole
+      poleMesh.geometry.translate(0, 0.5, 0);
+      scene.add(poleMesh);
+
+      camera.position.set(0, 2, 4);
+      camera.lookAt(0, 0, 0);
+    }
+
+    /***************************************
+     * RUN SIMULATION WITH TRAINED AGENT
+     ***************************************/
+    async function runSimulation() {
+      initThree();
+      // Reset the simulation environment
+      let state = simEnv.reset();
+
+      function animate() {
+        // Use the trained model to select an action
+        tf.tidy(()=>{
+          let fn = async () => {
+            const stateTensor = tf.tensor2d([state]);
+            const qVals = qModel.predict(stateTensor);
+            const qArray = await qVals.array();
+            const action = qArray[0].indexOf(Math.max(...qArray[0]));
+            tf.dispose([stateTensor, qVals]);
+  
+            // Step the simulation
+            const { state: nextState, done } = simEnv.step(action);
+            state = nextState;
+  
+            // Update Three.js objects based on state
+            const [x, , theta] = state;
+            cartMesh.position.x = x;
+            poleMesh.position.x = x;
+            poleMesh.rotation.z = theta;
+  
+            // If the pole has fallen, reset the simulation
+            if (done) {
+              state = simEnv.reset();
+            }
+          }
+          fn();
+        });
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Start training when the page loads.
+    trainAgent();
+  </script>
+</body>
+</html>

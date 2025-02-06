@@ -1,94 +1,91 @@
 export default function converse({
   model = 'deepseek-r1:14b',
-  message,
-  system,
+  message = '',
+  system = '',
   onDone,
   parseChunk,
-  parseLine,
+  parseLine
 }) {
-  // Create a new AbortController for this conversation
+  // Create an AbortController for this conversation
   const controller = new AbortController();
   const { signal } = controller;
 
-  // Build the request body
-  const bodyJSON = JSON.stringify({
-    message,
-    model,
-    system,
-  });
+  // Fallback no-ops for optional callbacks
+  parseChunk = parseChunk || (() => {});
+  parseLine = parseLine || (() => {});
+  onDone = onDone || (() => {});
 
-  // Wrap the asynchronous work in an immediately invoked async function
+  // Build the request body once
+  const bodyJSON = JSON.stringify({ message, model, system });
+
+  // The main async process
   const conversationPromise = (async () => {
     try {
       const response = await fetch('/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: bodyJSON,
-        signal, // attach the abort signal
+        signal
       });
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let lines = [];
-      let currentLine = "";
+      let currentLine = '';
 
-      const parseChar = (ch) => {
-        if (ch !== "\n") {
+      // Helper to accumulate lines
+      function processChar(ch) {
+        if (ch === '\n') {
+          lines.push(currentLine);
+          currentLine = '';
+        } else {
           currentLine += ch;
-          return;
         }
-        lines.push(currentLine);
-        currentLine = "";
-      };
+      }
 
       while (true) {
         const { done, value } = await reader.read();
-        let lineTop = lines.length;
+
+        // Start from the end of the 'lines' array
+        let lineIndex = lines.length;
+
         if (done) {
-          if (currentLine.length) {
-            lines.push(currentLine);
-          }
+          // If there's any leftover content in currentLine, push as final line
+          if (currentLine) lines.push(currentLine);
         } else {
+          // Decode chunk and pass to parseChunk callback
           const textChunk = decoder.decode(value, { stream: true });
-          for (let i = 0; i < textChunk.length; i++) {
-            const ch = textChunk.charAt(i);
-            parseChar(ch);
-          }
-          if (parseChunk) {
-            parseChunk(textChunk);
+          parseChunk(textChunk);
+
+          // Break the chunk into lines
+          for (const ch of textChunk) {
+            processChar(ch);
           }
         }
-        while (lineTop < lines.length) {
-          if (parseLine) {
-            parseLine(lines[lineTop]);
-          }
-          lineTop++;
+
+        // Process any new lines with parseLine
+        while (lineIndex < lines.length) {
+          parseLine(lines[lineIndex]);
+          lineIndex++;
         }
+
+        // If the stream is done, exit the loop
         if (done) break;
       }
 
-      if (onDone) {
-        onDone({
-          prompt: message,
-          bodyJSON,
-          response,
-        });
-      }
+      // Done callback with final info
+      onDone({ prompt: message, bodyJSON, lines });
     } catch (err) {
-      if (err.name === "AbortError") {
-        console.log("Fetch aborted: Client disconnected.");
+      if (err.name === 'AbortError') {
+        console.log('Fetch aborted: Client disconnected.');
       } else {
-        console.error("Fetch error:", err);
+        console.error('Fetch error:', err);
       }
     }
   })();
 
-  // Return an object exposing the promise and a stop method.
   return {
     promise: conversationPromise,
-    stop: () => 
-        controller.abort(),
+    stop: () => controller.abort()
   };
 }

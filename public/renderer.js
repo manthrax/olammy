@@ -39,7 +39,7 @@ renderer.debug.onShaderError = (gl, program, glVertexShader, glFragmentShader) =
     onShaderError.fn(errorInfo)
 }
 
-
+let onFrame = {fn:()=>{}}
 let {width, height} = canvas;
 renderer.setAnimationLoop( (dt) => {
     let containerBounds = canvas.parentElement.getClientRects()[0];
@@ -48,8 +48,9 @@ renderer.setAnimationLoop( (dt) => {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
     }
+    onFrame.fn(dt)
     controls.update()
     renderer.render(scene, camera)
 }
 )
-export {THREE, renderer, scene, camera, controls, onShaderError};
+export {THREE, renderer, scene, camera, controls, onShaderError, onFrame};

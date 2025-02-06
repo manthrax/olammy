@@ -1,10 +1,11 @@
 import*as app from "./renderer.js"
-let {renderer, scene, camera, onShaderError} = app;
+let {renderer,scene,camera,controls,onShaderError} = app;
+
 
 import generators from "./generators.js"
 import converse from "./converse.js"
 
-let setVisible = (e, visible=true) => e.style.display = visible ? '' : 'none'
+let setVisible = (e, visible=true) => e.style.display = visible ? '':'none'
 
 const chatContainer = document.getElementById("chat-container");
 const userInput = document.getElementById("user-input");
@@ -42,12 +43,11 @@ let makeEditable = (elem) => {
     elem.style.whiteSpace = "pre-wrap"
 }
 
+
 repairButton.addEventListener('click', (e) => {
     repairButton.style.display = 'none';
     if (repairRequest) {
-        send({
-            message: repairRequest
-        });
+        send(repairRequest);
         repairRequest = null;
     }
 }
@@ -61,7 +61,7 @@ stopButton.addEventListener('click', (e) => {
 }
 );
 
-import {previewShader, plane, addPreviewer, defaultMaterial, previewShaderMap} from "./generators/shaders/previewer.js"
+import {previewShader,plane,addPreviewer,defaultMaterial} from "./generators/shaders/previewer.js"
 
 onShaderError.fn = (errorInfo) => {
 
@@ -82,24 +82,19 @@ onShaderError.fn = (errorInfo) => {
         // + " [/ERROR] "
         chunk[errorLine] = repairRequest;
         repairRequest = chunk.join("\n") + `
-Fix the error marked with [ERROR]. Do not change anything else.
+Fix the error between [ERROR] and [/ERROR]. Do not change anything else.
 `
-        //console.log(lines[errLine - 1], errorInfo.fs.errors);
+
+        console.log(lines[errLine - 1], errorInfo.fs.errors);
 
         errorElement.innerText = lines[errLine - 1] + '\n' + errorInfo.fs.errors;
 
         repairButton.style.display = "";
-let key = errorInfo.fs.source.slice(errorInfo.fs.source.indexOf(`
-
-varying vec3 vWorldPos`))
-        let owner = previewShaderMap[key]
-        if(owner)
-            console.log("Bad shader:",owner.fileName);
     }
     shaderError && shaderError(errorInfo);
 }
 
-async function send({message, system, onResult, onShaderCompiled, onShaderCrashed}) {
+async function send(message, system) {
 
     // Display user message
     appendChatMessage(message, "user", "blue");
@@ -116,7 +111,6 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
     let inThink = false;
     let shaderCrashed;
     let saveCB = plane.onBeforeRender;
-    
     shaderError = (errorInfo) => {
 
         plane.material.dispose();
@@ -124,23 +118,25 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
         saveBtn.style.display = 'none';
         shaderCrashed = true;
         plane.onBeforeRender = saveCB;
-        //alert("Shader crushed!")
-        onShaderCrashed && onShaderCrashed()
+        
+        //alert("Crushed!")
     }
-
+    let recompileTime;
     let crashCheck = () => {
         if (!shaderCrashed) {
             saveBtn.style.display = '';
             //alert("ShaderGoood!!")
-            onShaderCompiled && onShaderCompiled()
+
+            setTimeout(()=>{
+                send("Give me a nice random 3 word sentence!")
+            },2000)
         }
     }
-
+    
     let waitForCrash = () => {
         setTimeout(crashCheck, 1000);
         plane.onBeforeRender = saveCB;
     }
-
     let preview = () => {
 
         if (errorElement) {
@@ -148,18 +144,19 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
             errorElement = null;
         }
         plane.material = previewShader(glslElement.innerText, activeGenerator.vertex, activeGenerator.fragment);
+
         saveBtn.style.display = 'none';
         shaderCrashed = false;
-        plane.onBeforeRender = waitForCrash;
+        plane.onBeforeRender=waitForCrash;
 
-        renderer.compile(scene, camera)
+        renderer.compile(scene,camera)
 
     }
     let runGLSL = () => {
         if (!(glslLines.length || glslElement))
             return
         glslElement.innerText = glslLines.join("\n")
-        //console.log(glslElement.innerText);
+        console.log(glslElement.innerText);
         preview();
         makeEditable(glslElement)
         glslElement.addEventListener('input', function() {
@@ -202,8 +199,6 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
 
         }
         let stateColor = inThink ? "lightblue" : (inGLSL ? "orange" : 'blue');
-       if(currentLine=="")
-           return;
         console.log(`%c${currentLine}`, `color:${stateColor};`);
         if (isDelimeter) {
             botMessageElement = null;
@@ -225,6 +220,7 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
 
         }
     }
+
     conversation = converse({
         message,
         system,
@@ -233,7 +229,6 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
         onDone: (exchange) => {
             exchanges.push(exchange);
             stopButton.style.display = 'none';
-            onResult && onResult(exchange);
         }
     });
     stopButton.style.display = '';
@@ -243,9 +238,7 @@ async function sendChat() {
     let message = userInput.innerText.trim();
     if (!message)
         return;
-    send({
-        message
-    });
+    send(message);
     sendBtn.disabled = false;
 }
 
@@ -258,67 +251,19 @@ async function sendMessage() {
 
     message = activeGenerator.generator(message);
 
-    let doRandomGen = (result) => {
-
-        let rseed = '' + ((Math.random() * 100000) | 0);
-        send({
-            message: rseed + " Generate a short random prompt for a fragment shader!",
-            onResult: (result) => {
-                let lines = result.lines;
-                let seed = lines.pop();
-                if (seed.split(' ').length >= 3) {
-                    let message = activeGenerator.generator(seed);
-                    send({
-                        message,
-                        system: activeGenerator.system,
-                        onShaderCompiled,
-                        onShaderCrashed
-                    })
-                }
-            }
-        })
-    }
-
-    let onShaderCompiled = (result) => {
-        uploadJSON({
-            src: glslElement.innerText,
-        })
-        addPreviewer(glslElement.innerText);
-        doRandomGen(result)
-    }
-    let onShaderCrashed = (result) => {
-        doRandomGen(result)
-    }
-    send({
-        message,
-        system: activeGenerator.system,
-        onShaderCompiled,
-        onShaderCrashed
-    });
+    send(message, activeGenerator.system);
 
     sendBtn.disabled = false;
 }
 
 function appendChatMessage(text="", sender="bot", bgcolor='lightblue') {
-
-    // Determine if we're near the bottom (10px tolerance)
-    const atBottom = chatContainer.scrollTop + chatContainer.offsetHeight >= chatContainer.scrollHeight - 100;
-
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", sender);
     messageElement.innerText = text;
     messageElement.style.background = bgcolor
-    let sh = chatContainer.scrollHeight;
-    while( chatContainer.children.length > 100 ){
-        chatContainer.children[0].remove();
-    }
     chatContainer.appendChild(messageElement);
-    
-   // if (atBottom)
-        chatContainer.scrollTo({
-          top: sh,//chatContainer.scrollHeight,
-          left: 0,
-          behavior: 'smooth'});
+
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
 
     return messageElement;
 }
@@ -343,24 +288,23 @@ sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keydown", shiftEnterKD)
 userInput.addEventListener("input", (e) => {});
 
-let artifacts = {}
+let artifacts={}
 
-let galleryDir = await (await fetch("./data.json")).json();
-//[];//await (await fetch("/files")).json()
-console.log("gallery files:",galleryDir.length);
+let galleryDir = await (await fetch("./data.json")).json();//[];//await (await fetch("/files")).json()
+console.log(galleryDir);
 let fraggles = {}
 await galleryDir.forEach(async (f, i) => {
-    let fraggle = await (await fetch("data/" + f)).json()
+    let fraggle = await (await fetch("data/"+f)).json()
     if (fraggles[fraggle.src]) {
         console.log("Found duplicate:", f)
     } else {
         fraggles[fraggle.src] = f;
-        let previewer = addPreviewer(fraggle.src)
-previewer.fileName = f;
+        addPreviewer(fraggle.src)
+
         artifacts[f] = fraggle;
     }
-    if (i == galleryDir.length - 1) {
-        //console.log(JSON.stringify(artifacts))
+    if(i==galleryDir.length-1){
+        console.log(JSON.stringify(artifacts))
     }
 }
 )
@@ -371,6 +315,7 @@ function uploadFile() {
     var formData = new FormData();
     formData.append('file', file);
 */
+
 
 async function uploadJSON(jsonObject, filename="data.json") {
     const blob = new Blob([JSON.stringify(jsonObject, null, 2)],{
@@ -396,6 +341,7 @@ async function uploadJSON(jsonObject, filename="data.json") {
     }
 }
 
+
 function uploadFile() {
     saveBtn.style.display = 'none';
     if (glslElement) {
@@ -414,7 +360,7 @@ modelList.addEventListener("change", (e) => {
 }
 );
 
-function fetchModels(onSuccess, onError) {
+function fetchModels(onSuccess,onError) {
     fetch('/models').then(response => response.json()).then(data => {
         onSuccess && onSuccess(data);
     }
@@ -426,7 +372,7 @@ function fetchModels(onSuccess, onError) {
 
 }
 
-fetchModels( (data) => {
+fetchModels((data)=>{
     const modelList = document.getElementById('modelList');
     modelList.innerHTML = '';
     // Clear previous list
@@ -439,10 +385,8 @@ fetchModels( (data) => {
         }
     }
     );
-}
-, () => {
+},()=>{
     setHidden(divider);
     setHidden(chatPanel);
     leftPane.style.width = '100%';
-}
-);
+});
