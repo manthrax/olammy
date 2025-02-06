@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create rotating polar coordinates\n    vec2 st = uv * 2.0 - 1.0;\n    float r = length(st);\n    float theta = atan2(st.y, st.x) + iTime * 0.5;\n    \n    // Add some noise and turbulence\n    vec3 noiseInput = vec3(r * 10.0, theta * 10.0, iTime * 0.5);\n    float t = turbulent(noiseInput);\n    \n    // Create color variations\n    vec3 color1 = hsl(theta * 0.2 + 0.5, 0.7, 0.6);\n    vec3 color2 = hsl(theta * 0.2 + 0.3, 0.8, 0.4);\n    \n    // Combine colors with turbulence\n    vec3 finalColor = mix(color1, color2, t * 0.5 + 0.5);\n    \n    return vec4(finalColor, 1.0);\n}"
+}
