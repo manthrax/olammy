@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    vec2 st = uv;\n    \n    // Animate coordinates over time\n    st.x += sin(iTime * 2.) * 0.3;\n    st.y += cos(iTime * 3.) * 0.3;\n    \n    // Add noise to create dynamic patterns\n    float n1 = noise(st) + 0.1;\n    float n2 = noise(vec2(st.x * 1.5, st.y * 1.5)) * 0.5;\n    \n    // Create turbulence effect for fractal-like patterns\n    float t = turbulent(vec2(st * 3.)) * 4.;\n    \n    // Combine noise and turbulence with HSL color space\n    vec3 color = hsl2rgb(vec3(\n        t,                  // Hue based on turbulence\n        n1 * 0.8 + 0.2,   // Saturation using noise\n        n2 * 0.6 + 0.4    // Lightness using another noise layer\n    ));\n    \n    return vec4(color, 1.0);\n}"
+}
