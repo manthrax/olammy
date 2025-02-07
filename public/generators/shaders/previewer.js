@@ -120,6 +120,10 @@ let mouseScroll = () => {
     controls.target.y += dy * .05;
     galleryBounds.clampPoint(controls.target,controls.target)
     camera.position.add(controls.target);
+    controls.minDistance = .01;
+    controls.maxDistance = 10;
+    controls.mouseButtons.RIGHT=0;
+    controls.mouseButtons.LEFT=2;
 
 }
 
