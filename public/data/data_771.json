@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a center point\n    vec2 center = vec2(0.5, 0.5);\n    \n    // Calculate distance from center with noise\n    float dist = length(uv - center);\n    dist += noise(uv * 10.0 + iTime) * 0.2;\n    \n    // Create color components based on position and time\n    vec3 color = hsl(\n        (dist * 4.0 + iTime * 2.0) * pi,   // Hue variation\n        0.7 + turbulent(vec3(uv, iTime)) * 0.3, // Saturation with noise\n        0.5 + sin(iTime) * 0.5             // Lightness variation\n    );\n    \n    return vec4(hsl2rgb(color), 1.0);\n}"
+}

@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a checkerboard pattern using floor and mod\n    vec2 st = floor(uv * 5.0);\n    float check = mod(st.x + st.y, 2.0);\n    \n    // Animate the squares with time\n    float pulse = sin(iTime * 0.5) * 0.5 + 0.5;\n    \n    // Create color variations for each square\n    vec3 color1 = hsl(check * 0.5, 0.7, 0.6);\n    vec3 color2 = hsl((check + pulse) * 0.5, 0.7, 0.6);\n    \n    // Combine colors based on checkerboard pattern\n    vec3 finalColor = mix(color1, color2, check);\n    \n    return vec4(finalColor, 1.0);\n}"
+}

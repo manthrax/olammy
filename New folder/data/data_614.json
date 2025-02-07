@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Animate position over time\n    vec2 pos = uv * 5.0 + iTime;\n    \n    // Create rotating pattern using sine waves\n    float wave1 = sin(pos.x * 0.5 + iTime) * 0.5 + 0.5;\n    float wave2 = sin(pos.y * 0.5 + iTime) * 0.5 + 0.5;\n    \n    // Combine patterns with rotation and scaling\n    vec2 rotatedUV = uv * 4.0 + vec2(sin(iTime)*3.0, cos(iTime)*3.0);\n    \n    // Add noise for texture\n    float noiseValue = noise(rotatedUV) * 0.5 + 0.5;\n    \n    // Create color transitions using HSL\n    vec3 color = hsl(\n        sin(iTime * 0.2 + uv.x * 4.0) * 0.5 + 0.5,  // Hue\n        0.7,  // Saturation\n        noiseValue * (wave1 + wave2) * 0.5 + 0.5);    // Lightness\n    \n    return vec4(color, 1.0);\n}"
+}

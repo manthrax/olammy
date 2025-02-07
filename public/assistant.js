@@ -1,5 +1,9 @@
 import*as app from "./renderer.js"
-let {renderer, scene, camera, onShaderError} = app;
+let {renderer, scene, camera, onShaderError, events} = app;
+
+
+
+
 
 import generators from "./generators.js"
 import converse from "./converse.js"
@@ -61,6 +65,7 @@ stopButton.addEventListener('click', (e) => {
 }
 );
 
+let badFiles = []
 import {previewShader, plane, addPreviewer, defaultMaterial, previewShaderMap} from "./generators/shaders/previewer.js"
 
 onShaderError.fn = (errorInfo) => {
@@ -93,8 +98,10 @@ let key = errorInfo.fs.source.slice(errorInfo.fs.source.indexOf(`
 
 varying vec3 vWorldPos`))
         let owner = previewShaderMap[key]
-        if(owner)
+        if(owner){
             console.log("Bad shader:",owner.fileName);
+            badFiles.push(owner.fileName);
+        }
     }
     shaderError && shaderError(errorInfo);
 }
@@ -262,7 +269,7 @@ async function sendMessage() {
 
         let rseed = '' + ((Math.random() * 100000) | 0);
         send({
-            message: rseed + " Generate a short random prompt for a fragment shader!",
+            message: rseed + " Generate a short random prompt for an interesting fragment shader!",
             onResult: (result) => {
                 let lines = result.lines;
                 let seed = lines.pop();
@@ -349,21 +356,32 @@ let galleryDir = await (await fetch("./data.json")).json();
 //[];//await (await fetch("/files")).json()
 console.log("gallery files:",galleryDir.length);
 let fraggles = {}
-await galleryDir.forEach(async (f, i) => {
+
+
+let load = async (f, i) => {
     let fraggle = await (await fetch("data/" + f)).json()
     if (fraggles[fraggle.src]) {
         console.log("Found duplicate:", f)
+
+        badFiles.push(f);
     } else {
         fraggles[fraggle.src] = f;
         let previewer = addPreviewer(fraggle.src)
-previewer.fileName = f;
-        artifacts[f] = fraggle;
+        if(!previewer){
+            console.log("Bad artifact:",f);
+            badFiles.push(f);
+        }else{
+            previewer.fileName = f;
+            artifacts[f] = fraggle;
+        }
     }
     if (i == galleryDir.length - 1) {
         //console.log(JSON.stringify(artifacts))
     }
 }
-)
+
+for(let i=0;i<galleryDir.length;i++)
+    await load(galleryDir[i],i);
 
 /*
 function uploadFile() {
@@ -406,6 +424,34 @@ function uploadFile() {
     } else {
         alert("no glsl!")
     }
+}
+
+async function deleteFile(filename) {
+  try {
+    const response = await fetch('/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ filename })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
+
+    const result = await response.text();
+    console.log('File deleted successfully:', result);
+    // You could update the UI here if needed
+  } catch (err) {
+    console.error('Error deleting file:', err);
+  }
+}
+
+for(let i=0;i<badFiles.length;i++){
+    
+     let f = badFiles[i];
+    await deleteFile(f)
 }
 
 saveBtn.addEventListener("click", uploadFile);

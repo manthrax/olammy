@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create rotating pattern using sine functions\n    float time = iTime * 0.5;\n    vec2 center = vec2(0.5);\n    vec2 st = uv - center;\n    \n    // Polar coordinates\n    float r = length(st);\n    float a = atan2(st.y, st.x) + sin(time) * 2.0;\n    \n    // Create rotating sectors with turbulence\n    a += turbulent(vec3(uv * 10.0, time)) * 0.5;\n    a = mod(a, PI/4.0); // Create 8 sectors\n    \n    // Color transformation using HSL shifts\n    vec3 hslColor = vec3(\n        sin(r * 20.0 + time) * 0.5 + 0.5,\n        sin(r * 10.0 + a * 2.0) * 0.5 + 0.5,\n        cos(r * 5.0 + time) * 0.5 + 0.5\n    );\n    \n    // Convert HSL to RGB and output\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
+}

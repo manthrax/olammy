@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    vec2 st = uv;\n    \n    // Create a warping effect using time-based transformations\n    float timeFactor = iTime * 0.5;\n    st.x += sin(timeFactor + st.y) * 0.3;\n    st.y += cos(timeFactor - st.x) * 0.3;\n    \n    // Add turbulence for dynamic distortion\n    float t = turbulent(st * 10.0);\n    \n    // Get noise value from texture\n    vec2 noiseUV = (st * 5.0 + iTime) * 0.1;\n    float n = noise(noiseUV);\n    \n    // Create color variations using HSL\n    vec3 color = hsl2rgb(vec3(\n        sin(timeFactor) * 0.5 + 0.5,\n        cos(n * PI) * 0.5 + 0.5,\n        0.8\n    ));\n    \n    // Combine effects with original position\n    return vec4(color, 1.0) * (vec4(1.0) + t * 0.2);\n}"
+}

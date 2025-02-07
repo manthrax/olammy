@@ -25,7 +25,10 @@ vec4 Effect2(vec2 uv) {
 - Incorporate procedural noise, turbulence, and color transformations when appropriate.
 - The output must only contain GLSL code, wrapped in glsl fenced code blocks.
 
-Here's the prompt to generate: ${request}.`
+Here's the prompt to generate: ${request}.
+`
+
+// Please generate 3 separate variations, each in their own glsl block, separated with a descriptive label.
 
 let vertex = (func) => glsl.vertex
 let fragment = (func)=>`

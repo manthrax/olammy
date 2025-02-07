@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar form for rotation\n    float angle = atan2(uv.y, uv.x);\n    angle += iTime * 10.0; // Rotate over time\n    \n    // Create square pattern using trigonometric functions\n    float r = length(uv) * 0.75;\n    float x = abs(cos(angle)) * r;\n    float y = abs(sin(angle)) * r;\n    float square = (x + y) / 2.0;\n    \n    // Generate smooth color transitions using HSL colors\n    vec3 color = hsl(mod(iTime * 0.5 + square * 2.0, 1.0), 0.7, 0.5);\n    \n    return vec4(color, 0.8);\n}"
+}

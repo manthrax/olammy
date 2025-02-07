@@ -1,0 +1,3 @@
+{
+  "src": "\n//prompt: a wavy grid\n\nvec4 Effect2(vec2 uv) {\n    // Apply some distortion to the coordinates\n    vec2 distortedUV = uv + 0.5 * sin(uv * 10.0 + iTime);\n    \n    // Create grid lines with warping effect\n    float horizontal = abs(sin(distortedUV.y * 10.0));\n    float vertical = abs(sin(distortedUV.x * 10.0));\n    \n    // Combine and color the grid\n    vec3 color = mix(\n        vec3(0.2, 0.5, 1.0), // Blue-ish for horizontal lines\n        vec3(1.0, 0.3, 0.3), // Red-ish for vertical lines\n        step(0.9, horizontal + vertical)\n    );\n    \n    return vec4(color, 1.0);\n}"
+}

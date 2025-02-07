@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a position variable centered at 0.0\n    vec2 pos = uv * 2.0 - 1.0;\n    \n    // Add time-based movement\n    float t = iTime * 0.5;\n    vec2 st = pos + vec2(sin(t + pos.x) * 0.3, cos(t + pos.y) * 0.3);\n    \n    // Create a noise-based pattern with turbulence\n    float n = noise(st * 4.0 + t) * 0.5 + 0.5;\n    n += turbulent(st * 2.0 + t) * 0.3;\n    \n    // Convert to HSL color space and back to RGB\n    vec3 color = hsl2rgb(vec3(\n        (n * 0.6 + 0.4) * 360.0,   // Hue\n        1.0 - abs(n - 0.5) * 2.0,  // Saturation\n        n                          // Lightness\n    ));\n    \n    return vec4(color, 1.0);\n}"
+}

@@ -39,6 +39,23 @@ renderer.debug.onShaderError = (gl, program, glVertexShader, glFragmentShader) =
     onShaderError.fn(errorInfo)
 }
 
+
+let events = {
+    _events:{},
+    listen:function(name,fn){
+        if(!this._events[name])this._events[name]=[]
+        this._events[name].push(fn);
+    },
+    mute:function(name,fn){
+        if(!this._events[name])console.error("event not found:",name)
+        this._events[name]=this._events[name].filter(v=>v==fn);
+    },
+    dispatch:function(name,params){
+        return this._events[name]&&this._events[name].map(fn=>fn(params))
+    }
+}
+
+
 let onFrame = {fn:()=>{}}
 let {width, height} = canvas;
 renderer.setAnimationLoop( (dt) => {
@@ -49,8 +66,9 @@ renderer.setAnimationLoop( (dt) => {
         camera.updateProjectionMatrix();
     }
     onFrame.fn(dt)
+    events.dispatch('frame',dt)
     controls.update()
     renderer.render(scene, camera)
 }
 )
-export {THREE, renderer, scene, camera, controls, onShaderError, onFrame};
+export {THREE, renderer, scene, camera, controls, onShaderError, onFrame, events};

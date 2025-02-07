@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Apply turbulence for distortion effect\n    vec2 distorted = uv + vec2(\n        turbulent(uv * 10.0 + iTime),\n        turbulent(uv * 15.0 - iTime)\n    ) * 0.3;\n    // Create checkerboard pattern by flooring the distorted coordinates\n    vec2 grid = floor(distorted * 10.0);\n    float cell = (grid.x + grid.y) % 2.0;\n    vec3 color = (cell == 1.0) ? vec3(0.0) : vec3(1.0);\n    // Simulate mouse position moving over time\n    vec2 mousePos = vec2(sin(iTime * 0.5), cos(iTime)) * 0.5 + 0.5;\n    float dist = length(uv - mousePos);\n    \n    // Invert color if within a certain distance from the simulated mouse position\n    if (dist < 0.2) {\n        color = 1.0 - color;\n    }\n    return vec4(color, 1.0);\n}"
+}

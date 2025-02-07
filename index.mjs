@@ -142,6 +142,35 @@ app.post('/upload', upload.single('file'), (req, res) => {
   rebuildDirectoryJSON();
 });
 
+// Delete endpoint
+
+app.post('/delete', async (req, res) => {
+  try {
+    const { filename } = req.body; // e.g. { "filename": "myData_1.json" }
+    if (!filename) {
+      return res.status(400).send('Missing filename in request body');
+    }
+    let id = parseInt(filename.split('.')[0].slice(5));
+    
+    let sanFilename = 'data_'+id+'.json'
+    // Construct the full path to the file
+    const filePath = join(uploadDir, sanFilename);
+
+    // Attempt to delete
+    await fs.unlink(filePath);
+    console.log(`Deleted file: ${sanFilename}`);
+
+    // Rebuild data.json after removal
+    await rebuildDirectoryJSON();
+
+    // Respond success
+    res.status(200).send('File deleted successfully');
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    res.status(500).send('Failed to delete file');
+  }
+});
+
 /*
 // List all files in the uploadDir
 app.get('/files', async (req, res) => {

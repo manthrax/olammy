@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Center and scale UV coordinates\n    vec2 st = (uv - 0.5) * 12.0;\n    \n    // Add rotation based on time\n    float angle = atan2(st.y, st.x) + iTime * 0.5;\n    \n    // Create rotating sine wave pattern\n    float r = length(st);\n    float d = sin(r * 4.0 + angle * 3.0) * cos(angle * 4.0);\n    \n    // Add color shifts using HSL\n    vec3 color = hsl(\n        mod(angle * 2.0 + iTime, 1.0),  // Hue\n        0.7,                             // Saturation\n        0.5 + d * 0.4                   // Lightness with dynamic shift\n    );\n    \n    return vec4(hsl2rgb(color), 1.0);\n}"
+}

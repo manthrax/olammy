@@ -1,6 +1,6 @@
 import*as app from "./../../renderer.js"
 import generators from "./../../generators.js"
-let {THREE, scene, camera} = app;
+let {THREE, scene, camera, controls, events} = app;
 
 let noiseTexture = new THREE.TextureLoader().load('./noise.png')
 noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
@@ -9,15 +9,38 @@ let defaultMaterial = new THREE.MeshBasicMaterial({
 });
 
 let planeMaterial = defaultMaterial;
-let plane = new THREE.Mesh(new THREE.BoxGeometry(),planeMaterial);
+let plane = new THREE.Mesh(new THREE.PlaneGeometry(),planeMaterial);
 plane.frustumCulled = false;
 scene.add(plane);
 
-let timeBias = 0;
 let timeScale = 1.;
 document.addEventListener('keydown',(e)=>{
     if(e.code=='Equal')timeScale *= 10;
     if(e.code=='Minus')timeScale *= .1;
+})
+
+let globalTime = 0;
+let lastTime;
+let sharedUniforms={
+
+    iTime: {
+        //get value() {
+        //    return (performance.now()-timeBias)*timeScale / 1000;
+        //}
+        value:0
+    },
+    iChannel0: {
+        value: defaultMaterial.map
+    }
+}
+
+
+events.listen('frame',()=>{
+    let time = performance.now() / 1000;
+    if(!lastTime)lastTime=time;
+    sharedUniforms.iTime.value+=((time-lastTime) * timeScale);
+    sharedUniforms.iTime.value%=10000
+    lastTime=time;
 })
 
 let previewShader = (func, vertexFn, fragmentFn) => {
@@ -26,14 +49,7 @@ let previewShader = (func, vertexFn, fragmentFn) => {
         side: THREE.DoubleSide,
         alphaTest: .1,
         uniforms: {
-            iTime: {
-                get value() {
-                    return (performance.now()-timeBias)*timeScale / 1000;
-                }
-            },
-            iChannel0: {
-                value: defaultMaterial.map
-            }
+            ...sharedUniforms
         },
         vertexShader: vertexFn(),
         fragmentShader: fragmentFn(func)
@@ -59,8 +75,8 @@ let addPreviewer = (e) => {
     p.material = shader;
     let col = previewCount % 15;
     let row = (previewCount / 15) | 0
-    p.position.x = (col + 1) * 1.5;
-    p.position.y = (row + 1) * 1.5;
+    p.position.x = (col + 1) * 1.1;
+    p.position.y = (row + 1) * 1.1;
     scene.add(p);
     previewCount++;
     return previewShaderMap[shader.fragmentShader] = {mesh:p};

@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create polar coordinates from UV\n    float theta = atan2(uv.y, uv.x);\n    float r = length(uv * 1.5); // Scale radius\n    \n    // Create rotating color wheel effect\n    vec3 colorWheel = hsl2rgb(vec3(theta + iTime, 0.7, 0.5));\n    \n    // Create pulsating rings using sine wave and time\n    float ringEffect = sin(r * 10.0 - iTime * 2.0) * 0.5 + 0.5;\n    \n    // Combine effects with noise for texture\n    vec3 finalColor = mix(colorWheel, \n                         hsl2rgb(vec3(theta + iTime*0.5, 0.8, ringEffect)),\n                         turbulent(uv * 5.0) * 0.4 + 0.6);\n    \n    return vec4(finalColor, 1.0);\n}"
+}

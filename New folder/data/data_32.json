@@ -1,0 +1,3 @@
+{
+  "src": "\n//prompt: a fractal\nvec4 Effect2(vec2 uv) {\n    // Mandelbrot fractal\n    const float maxIterations = 20.0;\n    vec2 c = (uv - 0.5) * 3.0; // Scale and center the coordinates\n    vec2 z = vec2(0.0);\n    \n    float iterations = 0.0;\n    while (iterations < maxIterations && length(z) <= 2.0) {\n    vec2 nextZ = vec2(\n    z.x*z.x - z.y*z.y + c.x,\n    2.0*z.x*z.y + c.y\n    );\n    z = nextZ;\n    iterations++;\n    }\n    \n    // Color based on iteration count\n    float colorVal = length(z) > 2.0 ? iterations / maxIterations : 0.0;\n    \n    vec3 color = vec3(\n    sin(colorVal * 3.0 + 1.0),\n    sin(colorVal * 5.0 + 2.0),\n    sin(colorVal * 7.0 + 3.0)\n    );\n    \n    return vec4(color, 1.0);\n}\n"
+}

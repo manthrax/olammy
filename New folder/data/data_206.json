@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create base radial gradient\n    float d = length(uv - 0.5);\n    \n    // Add pulsing effect using sine wave\n    d += sin(iTime * 0.5 + d * 10.0) * 0.3;\n    \n    // Create color shifts over time\n    vec3 color = hsl(\n        sin(iTime * 0.2 + d * 4.0) * 0.5 + 0.5,  // Hue variation\n        0.8,                                      // Saturation\n        0.5                                       // Lightness\n    );\n    \n    // Add noise and turbulence for more dynamic effect\n    vec2 noiseUV = uv * 10.0 + iTime;\n    float n = noise(noiseUV);\n    color += turbulent(vec3(uv * 4.0, iTime)) * 0.2;\n    \n    // Final color with alpha\n    return vec4(color, 1.0);\n}"
+}

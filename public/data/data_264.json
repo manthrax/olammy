@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Calculate distance from center\n    float dist = length(uv);\n    \n    // Add pulsation based on time\n    float pulse = sin(iTime * 0.5) / 3.0;\n    dist += pulse;\n    \n    // Create color transition from red to blue\n    vec3 colorHSL = vec3(\n        (dist + sin(iTime) / 4.0) * 0.5,  // Hue: transitions between red and blue\n        0.8,                              // Saturation\n        mix(0.5, 0.7, dist)              // Lightness varies with distance\n    );\n    \n    // Add noise for extra texture\n    colorHSL += vec3(noise(uv * 10.0 + iTime), noise(uv * 10.0 + iTime + 1.0), noise(uv * 10.0 + iTime + 2.0)) * 0.1;\n    \n    return vec4(hsl2rgb(colorHSL), 1.0);\n}"
+}

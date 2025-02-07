@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create grid pattern using floor and fract functions\n    vec2 st = floor(uv * 50.0);\n    \n    // Calculate distance from center of each square\n    vec2 offset = uv - (floor(uv * 50.0) + 0.5)/50.0;\n    float dist = length(offset * 50.0);\n    \n    // Create pulsating animation using sine wave\n    float pulse = sin(iTime + dist * 2.0) * 2.0;\n    \n    // Calculate color transition from red to blue\n    vec3 hslColor = vec3(0.5 + pulse*0.5, 1.0, 0.5);\n    vec3 rgbColor = hsl2rgb(hslColor);\n    \n    // Add turbulence for extra visual interest\n    float turb = turbulent(uv * 10.0) * 0.1;\n    rgbColor += turb;\n    \n    return vec4(rgbColor, 1.0);\n}"
+}

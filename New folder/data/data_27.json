@@ -1,0 +1,3 @@
+{
+  "src": "\n//prompt: a sdf of a weird shape\nvec4 Effect2(vec2 uv) {\n    // Create a weird shape using signed distance function\n    vec2 distUV = uv * 10.0 + iTime;\n    \n    float gridX = sin(distUV.y * 5.0) / (sin(distUV.x * 3.0 + iTime) + 1.0);\n    float gridY = cos(distUV.x * 7.0) / (cos(distUV.y * 2.0 - iTime) + 1.0);\n    \n    float shape = sin(gridX * 3.0 + iTime * 2.0) * \n                 cos(gridY * 5.0 - iTime) +\n                 length(uv * 4.0) *\n                 (sin(length(uv) * 8.0) / 2.0);\n    \n    float noise = fract(sin(dot(uv, vec2(123.45, 678.9))) * 4321.0);\n    \n    shape = abs(shape + noise) * 0.5;\n    \n    return vec4(vec3(shape), 1.0);\n}        \n"
+}

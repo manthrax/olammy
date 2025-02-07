@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    vec3 pos = vec3(uv * 2.0 - 1.0, iTime * 0.5);\n    float t = iTime * 0.2;\n    \n    // Complex noise pattern with turbulence\n    float n = turbulent(pos + vec3(t)) * 0.5 + 0.5;\n    n += noise(vec3(uv * 4.0, t)) * 0.3;\n    \n    // Color based on position and noise\n    vec3 color = hsl2rgb(vec3(\n        (n * 0.6 + 0.3) * pi,\n        1.0 - abs(n - 0.5) * 2.0,\n        n * 0.3 + 0.2\n    ));\n    \n    return vec4(color, 1.0);\n}"
+}

@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create base color using HSL values\n    vec3 baseColor = hsl(uv.x * 0.5 + 0.5, 1.0, 0.5);\n    \n    // Calculate wave offset based on time and position\n    float waveOffset = sin(iTime * 0.5 + uv.y * pi) * 0.2;\n    vec2 shiftedUV = uv + vec2(waveOffset, 0.0);\n    \n    // Add turbulence effect to the color shift\n    float noiseValue = turbulent(shiftedUV * 10.0) * 0.5 + 0.5;\n    \n    // Shift hue using sine function for animation\n    float hueShift = sin(iTime * 0.2 + uv.x * pi) * 0.3 + 0.7;\n    vec3 shiftedColor = hsl(hueShift, noiseValue, 0.5);\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(shiftedColor), 1.0);\n}"
+}

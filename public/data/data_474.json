@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV to polar coordinates for rotational effects\n    vec2 st = uv * 2.0 - 1.0;\n    float r = length(st);\n    float theta = atan2(st.y, st.x) + iTime * 0.5;\n    \n    // Add turbulence to create dynamic swirling patterns\n    theta += turbulent(vec3(theta, r, iTime * 0.1)) * 0.5;\n    r += turbulent(vec3(r, theta, iTime * 0.2)) * 0.2;\n    \n    // Create rotational color gradients using HSL\n    vec3 color1 = hsl((theta + iTime) * 0.1, 0.7, 0.5);\n    vec3 color2 = hsl((theta - iTime) * 0.1, 0.6, 0.4);\n    \n    // Combine colors with additive blending\n    vec3 finalColor = (color1 + color2) * (0.5 + noise(vec2(r, theta)) * 0.5);\n    \n    return vec4(finalColor, 1.0);\n}"
+}

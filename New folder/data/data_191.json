@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    vec3 color = hsv2rgb(vec3(\n        iTime * 0.1 + sin(iTime) * 0.5,\n        0.7 + noise(uv * 0.5 + iTime) * 0.3,\n        0.8 + turbulent(uv * 4.0 - iTime * 2.0)\n    ));\n    \n    vec2 pos = uv;\n    float timeScale = iTime * 0.1;\n    \n    // Add flowing displacement\n    vec2 flow = noise(pos * 0.5 + iTime) * vec2(sin(timeScale), cos(timeScale)) * 0.3;\n    pos += flow;\n    \n    // Create molten effect with glow\n    float distanceFromEdge = length(vec2(1.0) - abs(pos));\n    color *= smoothstep(0.0, 0.5, distanceFromEdge);\n    \n    // Add glowing edges\n    vec3 glow = vec3(1.0, 0.8, 0.4) * exp(-distanceFromEdge * 2.0);\n    color += glow;\n    \n    return vec4(color, 1.0);\n}"
+}

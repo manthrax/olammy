@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create undulating sine wave pattern with noise\n    float wave = sin(uv.x * 4.0 + iTime) * 0.5;\n    wave += sin((uv.y * 3.0 - iTime) * 2.0) * 0.3;\n    wave += turbulent(vec2(uv * 10.0, iTime)) * 0.2;\n    \n    // Create vibrant color shifts using HSL\n    vec3 color = hsl2rgb(vec3(\n        iTime * 0.5,          // Hue variation over time\n        0.8 + wave * 0.2,     // Saturation modulation\n        0.6 + sin(iTime) * 0.4 // Lightness modulation\n    ));\n    \n    return vec4(color, 1.0);\n}"
+}

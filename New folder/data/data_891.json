@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a base star field using noise\n    float stars = noise(uv * 10.0);\n    \n    // Add pulsing animation with time\n    float pulse = sin(iTime + stars * 5.0) * 0.5 + 0.5;\n    \n    // Combine noise and pulse for brightness variation\n    float brightness = (stars + pulse) * 0.5;\n    \n    // Add turbulence for more dynamic movement\n    brightness += turbulent(uv * 100.0) * 0.3;\n    brightness += turbulent(uv * 200.0) * 0.2;\n    \n    // Create color variation using HSV to RGB conversion\n    vec3 color = hsv2rgb(vec3(\n        iTime * 0.5 + stars * 2.0,\n        0.7 + brightness * 0.3,\n        brightness\n    ));\n    \n    return vec4(color, 1.0);\n}"
+}
