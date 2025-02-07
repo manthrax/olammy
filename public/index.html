@@ -93,6 +93,30 @@
       align-items: center;
       gap: 5px;
     }
+    #info-panel {
+      position: absolute;
+      z-index:10;
+      left:10px;
+      top:10px;
+      width: 400px;
+      height:600px;
+      align-items: center;
+      background:#00000033;
+      gap: 5px;
+      pointer-events:none;
+      color:#04ffe2;
+  
+      background-color: #f4f4f436;  /* Light grey background */
+      border-left: 5px solid #f36d33;  /* Orange left border for style */
+      color: #333;  /* Dark grey text color */
+      font-family: 'Courier New', Courier, monospace;  /* Monospaced font for code */
+      padding: 10px;  /* Padding around the text */
+      margin: 0px 0;  /* Vertical spacing */
+      white-space: pre-wrap;  /* Maintains whitespace formatting */
+      word-wrap: break-word;  /* Ensures long lines do not overflow */
+
+      
+    }
     #user-input {
       flex-grow: 1;
       min-height: 32px;
@@ -125,6 +149,7 @@
     
     <!-- LEFT PANE (Canvas) -->
     <div id="left-pane">
+      <div id='info-panel'>TEST TEST</div>
       <canvas id="three-canvas"></canvas>
     </div>
     

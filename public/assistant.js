@@ -377,9 +377,13 @@ let load = async (f, i) => {
     }
 }
 
+let proms = galleryDir.map((f,i)=>load(f,i));
+
+await Promise.all(proms);
+/*
 for(let i=0;i<galleryDir.length;i++)
     await load(galleryDir[i],i);
-
+*/
 /*
 function uploadFile() {
     var file = document.getElementById('fileInput').files[0];

@@ -83,6 +83,7 @@ let addPreviewer = (e) => {
 
 controls.minAzimuthAngle = controls.maxAzimuthAngle = 0;
 controls.minPolarAngle = controls.maxPolarAngle = Math.PI * .5;
+controls.zoomToCursor = true;
 // Track mouse position
 let mouse = new THREE.Vector2();
 window.addEventListener("mousemove", (e) => {
