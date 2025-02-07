@@ -41,7 +41,14 @@ app.post('/chat', async (req, res) => {
   try {
     console.log("sending:", system, model, message);
     res.setHeader('Content-Type', 'text/plain');
-
+/*
+      seed: 123,
+        temperature: 0.1,
+        max_tokens: 1000,
+        top_k: 20,
+        top_p: 0.8
+        */
+    
     const responseStream = await ollama.chat({
       model,
       messages,
@@ -51,8 +58,8 @@ app.post('/chat', async (req, res) => {
       options: {
         seed: 123,
         temperature: 0.1,
-        max_tokens: 1000,
-        top_k: 20,
+        max_tokens: 250,
+        top_k: 10,
         top_p: 0.8
       }
     });

@@ -2,9 +2,6 @@ import*as app from "./renderer.js"
 let {renderer, scene, camera, onShaderError, events} = app;
 
 
-
-
-
 import generators from "./generators.js"
 import converse from "./converse.js"
 
