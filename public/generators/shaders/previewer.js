@@ -83,6 +83,10 @@ let addPreviewer = (e) => {
 
 controls.minAzimuthAngle = controls.maxAzimuthAngle = 0;
 controls.minPolarAngle = controls.maxPolarAngle = Math.PI * .5;
+controls.minDistance = .01;
+controls.maxDistance = 10;
+controls.mouseButtons.RIGHT=0;
+controls.mouseButtons.LEFT=2;
 controls.zoomToCursor = true;
 // Track mouse position
 let mouse = new THREE.Vector2();
@@ -120,10 +124,6 @@ let mouseScroll = () => {
     controls.target.y += dy * .05;
     galleryBounds.clampPoint(controls.target,controls.target)
     camera.position.add(controls.target);
-    controls.minDistance = .01;
-    controls.maxDistance = 10;
-    controls.mouseButtons.RIGHT=0;
-    controls.mouseButtons.LEFT=2;
 
 }
 
