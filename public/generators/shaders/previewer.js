@@ -3,7 +3,7 @@ import generators from "./../../generators.js"
 let {THREE, scene, camera, controls, events, renderer} = app;
 
 
-
+let canvas = renderer.domElement;
 
 let buf = new Float32Array(96*96*4);
 for(let i=0;i<buf.length;i++){
@@ -121,7 +121,7 @@ let worldCursor = new THREE.Vector3();
 let buttons = 0;
 let canvasIsTarget;
 
-window.addEventListener("mousemove", (e) => {
+canvas.addEventListener("pointermove", (e) => {
     canvasIsTarget = (e.target === renderer.domElement);
     // To get mouse coords relative to the canvas
     const rect = renderer.domElement.getBoundingClientRect();
@@ -132,7 +132,7 @@ window.addEventListener("mousemove", (e) => {
 
 scene.add(selectionPlane)
 
-window.addEventListener("pointerdown", (e) => {
+canvas.addEventListener("pointerdown", (e) => {
     buttons = e.buttons;
     if (e.target !== renderer.domElement) {
         canvasIsTarget = false;
@@ -231,6 +231,8 @@ let distMax=(a,b)=>{
     let dz=Math.abs(a.z-b.z);
     return Math.max(dx,dy,dz);
 }
+
+
 events.listen('frame', () => {
     let time = performance.now() / 1000;
     if (!lastTime)

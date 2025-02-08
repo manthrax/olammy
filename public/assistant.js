@@ -220,12 +220,13 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
                 glslElement = botMessageElement;
             }
             ///Can you format your responses in html?
-            if (botMessage.startsWith("<"))
-                botMessageElement.innerHTML = botMessage;
-            else
-                botMessageElement.innerText = botMessage;
-            // Auto-scroll
-            chatContainer.scrollTo(0, chatContainer.scrollHeight);
+            updateChat(()=>{
+                    
+                if (botMessage.startsWith("<"))
+                    botMessageElement.innerHTML = botMessage;
+                else
+                    botMessageElement.innerText = botMessage;
+            })
 
         }
     }
@@ -305,27 +306,37 @@ async function sendMessage(message = userInput.innerText.trim(), generator=activ
     sendBtn.disabled = false;
 }
 
-function appendChatMessage(text="", sender="bot", bgcolor='lightblue') {
-
-    // Determine if we're near the bottom (10px tolerance)
+let updateChat=(cb)=>{
+// Determine if we're near the bottom (10px tolerance)
     const atBottom = chatContainer.scrollTop + chatContainer.offsetHeight >= chatContainer.scrollHeight - 100;
+    let scrollTop = chatContainer.scrollTop;
+
+cb()
+    if (atBottom)
+        scrollTop = chatContainer.scrollHeight;
+    
+    chatContainer.scrollTo({
+      top: scrollTop,//chatContainer.scrollHeight,
+      left: 0,
+      behavior: 'smooth'
+    });
+
+    
+}
+function appendChatMessage(text="", sender="bot", bgcolor='lightblue') {
 
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", sender);
     messageElement.innerText = text;
     messageElement.style.background = bgcolor
-    let sh = chatContainer.scrollHeight;
-    while( chatContainer.children.length > 100 ){
-        chatContainer.children[0].remove();
-    }
-    chatContainer.appendChild(messageElement);
     
-   // if (atBottom)
-        chatContainer.scrollTo({
-          top: sh,//chatContainer.scrollHeight,
-          left: 0,
-          behavior: 'smooth'});
-
+    updateChat(()=>{
+        while( chatContainer.children.length > 100 ){
+            chatContainer.children[0].remove();
+        }
+        chatContainer.appendChild(messageElement);
+    })
+    
     return messageElement;
 }
 
