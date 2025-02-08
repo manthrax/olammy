@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec3 color = hsv2rgb(vec3(\n        atan2(sin(iTime * 2.0), cos(iTime * 1.5)) / (pi * 2.0),\n        0.7 + noise(uv * 5.0 + iTime * 0.5) * 0.3,\n        0.8 + turbulent(vec2(uv * 10.0 - iTime * 0.2)) * 0.2\n    ));\n    \n    float brightness = 0.7 + noise(vec2(iTime * 0.1)) * 0.3;\n    color *= vec3(brightness);\n    \n    return vec4(color, 1.0);\n}"
-}

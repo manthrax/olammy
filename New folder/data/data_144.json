@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Center the coordinates and normalize by aspect ratio\n    vec2 centerUV = (uv - 0.5) / max(uv.x, uv.y);\n    \n    // Calculate distance from center\n    float dist = length(centerUV);\n    \n    // Create expanding wave effect using time\n    float radius = mod(dist + iTime * 0.1, 1.0);\n    \n    // Convert distance to hue value (0-1 range)\n    vec3 colorHSL = vec3(radius, 1.0, 0.5); // HSL: hue, saturation, lightness\n    \n    // Convert HSL to RGB and return\n    return vec4(hsl2rgb(colorHSL), 1.0);\n}"
-}

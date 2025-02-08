@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec2 pos = uv * 4.0 - 1.0;\n    float time = iTime * 0.5;\n    \n    int max_steps = 100;\n    int steps = 0;\n    float trap = 0.1;\n    vec3 color = vec3(0.0);\n    \n    while (steps < max_steps) {\n        pos.x += sin(time + pos.y * 2.0) * 0.5;\n        pos.y += cos(time - pos.x * 2.0) * 0.5;\n        \n        float noise_val = noise(vec3(pos, time));\n        pos *= 1.0 + noise_val * 0.2;\n        \n        if (length(pos) < trap) {\n            color = hsl(float(steps)/float(max_steps), 1.0, 0.5);\n            break;\n        }\n        \n        steps++;\n    }\n    \n    return vec4(color, 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "\n//prompt: a fractal\nvec4 Effect2(vec2 uv) {\n    const float max_iter = 100.0;\n    \n    // Initialize complex number z and constant c\n    vec2 z = (2.0 * uv - 1.0);\n    vec2 c = vec2(-0.4, 0.6); // Julia set constant\n    \n    float iter = 0.0;\n    while(iter < max_iter) {\n    // Complex multiplication and addition: z^2 + c\n    z = vec2(z.x*z.x - z.y*z.y, 2.0 * z.x*z.y) + c;\n    \n    if(length(z) > 2.0) break;\n    iter += 1.0;\n    }\n    \n    // Color based on iteration count\n    float t = iter / max_iter;\n    vec3 color = mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0), t);\n    \n    return vec4(color, 1.0);\n}\n"
-}

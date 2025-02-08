@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create wave patterns with time offset\n    float waveX = sin(uv.x * 4.0 + iTime) * 0.5 + 0.5;\n    float waveY = sin(uv.y * 4.0 + iTime * 0.7) * 0.5 + 0.5;\n    \n    // Combine waves and add turbulence\n    vec2 movement = vec2(waveX, waveY);\n    movement += turbulent(movement * 10.0 + iTime).xx;\n    \n    // Create color cycling effect using HSL\n    vec3 color = hsl(iTime * 0.5 + movement.x * PI, 0.7, 0.6);\n    \n    return vec4(color * turbulent(uv * 20.0 + iTime), 1.0);\n}"
-}

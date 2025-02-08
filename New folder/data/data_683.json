@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // code here\n}\nvec2 coord = uv - vec2(0.5);\nfloat r = length(coord);\nfloat theta = atan2(coord.y, coord.x);\ntheta += iTime * (1.0 + r * 2.0);\nfloat s = abs(sin(theta));\nfloat c = abs(cos(theta));\nfloat sc = (s + c) * 0.5;\ntheta += iTime * (1.0 + r * 2.0) * 2.5;\ns = abs(sin(theta));\nc = abs(cos(theta));\nfloat sc2 = (s + c) * 0.5;\nfloat pattern = sc * 3.0 + sc2;"
-}

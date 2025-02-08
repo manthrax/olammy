@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    float t = iTime * 0.5;\n    \n    // Rotating sine wave pattern\n    vec2 q = uv + vec2(sin(uv.y * 3.0 + t), sin(uv.x * 3.0 + t));\n    q += vec2(0.5, 0.5); // Center the coordinates\n    \n    // Create color components with time-based variation\n    float r = sin(q.x * 4.0 + t) * cos(q.y * 4.0 - t);\n    float g = sin(q.x * 4.0 - t) * cos(q.y * 4.0 + t);\n    float b = noise(vec2(t, q.x)) * 0.5 + 0.5;\n    \n    // Convert to HSL and shift hue over time\n    vec3 hslColor = vec3(\n        (uv.x + uv.y + t) * 0.5,\n        0.7,\n        0.5\n    );\n    vec3 rgbColor = hsl2rgb(hslColor);\n    \n    // Combine patterns and colors\n    vec3 finalColor = vec3(r, g, b) * rgbColor;\n    \n    return vec4(finalColor, 1.0);\n}"
-}

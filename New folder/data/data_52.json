@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec3 noise1 = vec3(turbulent(uv * 5.0 + iTime));\n    vec3 noise2 = vec3(turbulent(uv * 10.0 - iTime));\n    \n    float time = sin(iTime * 0.5);\n    \n    vec3 color = hsl(\n        (noise1.x + noise2.y) * 0.5 + 0.5,\n        (noise1.y + noise2.x) * 0.5 + 0.5,\n        abs(time)\n    );\n    \n    float mixAmount = turbulent(uv * 3.0 + iTime);\n    color = mix(color, hsl2rgb(vec3(0.0)), mixAmount);\n    \n    return vec4(color, 1.0);\n}"
-}

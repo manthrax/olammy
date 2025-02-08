@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Center the UV coordinates\n    vec2 st = uv * 2.0 - 1.0;\n    \n    // Create polar coordinates\n    float r = length(st);\n    float a = atan2(st.y, st.x) + iTime * 0.5; // Add time-based rotation\n    \n    // Multiple sine waves with different frequencies and phases\n    float wave1 = sin(a * 3.0 + iTime * 2.0) / r;\n    float wave2 = sin(a * 5.0 + iTime * 3.0 + PI) / r;\n    float wave3 = sin(a * 7.0 + iTime * 4.0 + PI*2.0) / r;\n    \n    // Combine waves with RGB offsets\n    vec3 color = vec3(wave1, wave2, wave3);\n    \n    // Add noise for extra detail\n    float noise = turbulent(st * 5.0 + iTime);\n    color += noise * 0.5;\n    \n    return vec4(clamp(color, 0.0, 1.0), 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Animate position over time\n    vec2 pos = uv * 10.0 + iTime;\n    \n    // Create noise pattern with turbulence\n    float noiseVal = turbulent(pos);\n    \n    // Use HSL to create shifting colors\n    vec3 color = hsl(\n        mod(iTime * 0.5, 1.0),   // Hue shift over time\n        0.7 + noiseVal * 0.3,    // Saturation modulation\n        0.5 + sin(pos.x * 0.5) * 0.25 // Lightness variation\n    );\n    \n    return vec4(color, 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Scale UV coordinates and add time-based movement\n    vec2 st = fract(uv * 5.0 + sin(iTime) * 0.5);\n    \n    // Create a noise pattern with turbulence\n    float n1 = turbulent(st * 3.0 + sin(iTime * 0.7));\n    float n2 = turbulent(st * 6.0 + cos(iTime * 0.5));\n    \n    // Combine noise patterns\n    float pattern = (n1 * 0.5 + 0.5) * (n2 * 0.3 + 0.7);\n    \n    // Convert to HSL color with dynamic hue\n    vec3 hslColor = vec3(\n        fract(pattern * 0.4 + iTime * 0.1),\n        0.8, // Saturation\n        0.5  // Lightness\n    );\n    \n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
-}

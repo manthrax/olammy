@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Moving sine wave pattern with time offset\n    float wave1 = sin(uv.x * 10.0 + iTime) * 0.5 + 0.5;\n    float wave2 = sin(uv.y * 10.0 + iTime * 0.5 + pi) * 0.5 + 0.5;\n    \n    // Create a base color with time-varying hue\n    vec3 baseColor = hsl2rgb(vec3(iTime * 0.1, 0.7, 0.6));\n    \n    // Add noise texture\n    float noiseX = noise(uv * 40.0 + iTime) * 0.3;\n    float noiseY = noise(uv * 40.0 + iTime + pi) * 0.3;\n    \n    // Combine waves and noise with color\n    vec3 finalColor = baseColor * (wave1 + wave2 + noiseX + noiseY) * 1.5;\n    \n    return vec4(finalColor, 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    float t = iTime * 0.1;\n    \n    vec2 pos = uv;\n    pos.x += sin(t) * 0.5;\n    \n    float noise1 = noise(pos * 8.0);\n    float noise2 = noise((uv + vec2(sin(t), cos(t))) * 6.0);\n    \n    float wave = (noise1 + noise2) * 0.5;\n    wave = mod(wave + t, 1.0);\n    \n    vec3 color = hsv2rgb(vec3(\n        wave * 6.0,\n        0.7 + sin(wave * 4.0 + t) * 0.3,\n        0.8 + noise(uv * 5.0 - t) * 0.2\n    ));\n    \n    return vec4(color, 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create a grid of triangles\n    vec2 grid = floor(uv * 10.0 + iTime); // Scale and animate grid\n    \n    // Calculate triangle edges using cross product\n    vec2 v1 = abs(grid - uv*2.0 + 0.5);\n    vec2 v2 = abs(grid - uv*2.0 - 0.5);\n    \n    // Create rotating color gradients\n    float angle = atan2(v1.y, v1.x) + iTime;\n    float radius = length(v1);\n    \n    // HSV color with rotating gradient\n    vec3 hsvColor = vec3(angle * 0.1, radius * 0.5 + 0.5, 1.0);\n    vec3 rgbColor = hsv2rgb(hsvColor);\n    \n    // Add pulsing effect\n    float pulse = sin(iTime) * 0.5 + 0.5;\n    return vec4(rgbColor * pulse, 1.0);\n}"
-}

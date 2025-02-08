@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create pulsating sine wave pattern\n    float wave = sin(uv.x * 4.0 + iTime) * 0.5 + 0.5;\n    wave += sin(iTime * 0.5 + uv.x * 8.0) * 0.3;\n    \n    // Create shifting RGB colors using HSL\n    vec3 color = hsl2rgb(vec3(0.5 * iTime, 1.0, wave));\n    \n    // Add vertical movement and noise\n    float yWave = sin(uv.y * 4.0 + iTime * 0.7) * 0.3;\n    color *= vec3(wave + yWave);\n    \n    return vec4(color, 1.0);\n}"
-}

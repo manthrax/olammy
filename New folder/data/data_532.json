@@ -1,3 +1,0 @@
-{
-  "src": "uniform float time;\nuniform vec2 resolution;\nvoid main() {\n    vec2 uv = gl_FragCoord.xy / resolution.xy;\n    \n    const float numCells = 8.0;\n    vec2 grid = floor(uv * numCells) / numCells;\n    vec2 center = grid + vec2(0.5)/numCells;\n    vec2 pos = uv - center;\n    \n    float r = length(pos);\n    float theta = atan(pos.y, pos.x) + time * 0.5; // Adding rotation over time\n    \n    // Compute turbulence\n    float turb = turbulent(vec3(r, time, 0.0)) * 0.5 + 0.5;\n    \n    vec3 colorHSL = vec3(theta / (2.0 * pi), 1.0 - r * 2.0, 0.5);\n    colorHSL.z += turb; // Adding turbulence to lightness\n    \n    vec3 colorRGB = hsl2rgb(colorHSL);\n    \n    gl_FragColor = vec4(colorRGB, 1.0);\n}"
-}

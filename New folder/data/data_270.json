@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Scale and animate UV coordinates\n    vec2 st = uv * 10.0 + iTime;\n    \n    // Create a grid of points with sine wave modulation\n    float x = sin(st.x * 0.5 + iTime) * 0.5 + 0.5;\n    float y = sin(st.y * 0.5 + iTime + PI/2.) * 0.5 + 0.5;\n    \n    // Combine coordinates and add turbulence\n    vec3 color = hsl2rgb(vec3(\n        (x + y) * 0.5,   // Hue based on position\n        1.0 - turbulent(st.xyy * 0.5), // Saturation with turbulence\n        0.8 + sin(iTime) * 0.2 // Brightness variation over time\n    ));\n    \n    return vec4(color, 1.0);\n}"
-}

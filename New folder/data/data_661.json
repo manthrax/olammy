@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create two sine waves with different frequencies and offsets\n    float wave1 = sin(uv.x * 5.0 + iTime) * 0.5;\n    float wave2 = sin(uv.y * 5.0 + iTime * 0.7) * 0.5;\n    \n    // Combine the waves with varying amplitudes\n    vec2 combined = vec2(wave1, wave2);\n    combined *= turbulent(vec3(uv * 4.0, iTime * 0.1)) * 0.5 + 0.5;\n    \n    // Create color variations using HSL\n    vec3 color = hsl(\n        (wave1 + wave2) * 0.5 + 0.5,\n        0.7,\n        0.6\n    );\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(color), 1.0);\n}"
-}

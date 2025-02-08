@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create sine wave patterns in both x and y directions\n    float sinX = sin(uv.x * 8.0 + iTime * 2.0);\n    float sinY = sin(uv.y * 8.0 + iTime * 3.0);\n    \n    // Combine the waves with some phase shifting\n    vec2 wave = vec2(sinX, sinY) * 0.5 + 0.5;\n    \n    // Add turbulence to create dynamic movement\n    float turb = turbulent(uv * 4.0 + iTime);\n    \n    // Create color transitions using HSL\n    vec3 color = hsl(\n        mod(iTime * 0.2 + wave.x * 1.5, 1.0),  // Hue\n        0.7 + turb * 0.3,                       // Saturation\n        0.5 + wave.y * 0.5                      // Lightness\n    );\n    \n    // Convert HSL to RGB and output\n    return vec4(hsl2rgb(color), 1.0);\n}"
-}

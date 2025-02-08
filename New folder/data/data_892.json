@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec4 result;\n    \n    // Base noise pattern with time variation\n    float baseNoise = noise(vec3(uv * 10.0, iTime));\n    \n    // Add turbulence for fractal effect\n    float turb = turbulent(vec3(uv * 20.0, iTime * 0.5));\n    \n    // Combine noise and turbulence with time-based color shifts\n    vec3 color = hsl(\n        0.5 + turb * 0.5 + iTime * 0.1,\n        0.7 + noise(vec3(uv * 15.0, iTime)) * 0.2,\n        0.5 + sin(iTime) * 0.4 + noise(vec3(uv * 25.0, iTime * 0.7)) * 0.2\n    );\n    \n    result.rgb = hsl2rgb(color);\n    return result;\n}"
-}

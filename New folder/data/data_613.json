@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec4 fragColor = vec4(0.0);\n    \n    // Create grid points\n    vec2 st = floor(uv * 10.0 + 0.5);\n    \n    // Calculate distance from center of each square\n    vec2 pos = (st - uv) * 0.1;\n    float dist = length(pos);\n    \n    // Add rotation based on time\n    float angle = atan2(pos.y, pos.x) + sin(iTime * 0.5);\n    float rotatedDist = max(abs(cos(angle)), abs(sin(angle))) * 0.5;\n    \n    // Create square shape with varying opacity\n    if (dist < 0.5) {\n        fragColor.rgb = vec3(1.0);\n        fragColor.a = turbulent(vec2(st)) * 0.5 + 0.5;\n    }\n    \n    return fragColor;\n}"
-}

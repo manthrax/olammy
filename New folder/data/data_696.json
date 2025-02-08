@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec3 mouse = iMouse.xyz;\n    \n    // Create base frequency layers with sine waves\n    float layer1 = sin(uv.x * 8.0 + iTime) * 0.5 + 0.5;\n    float layer2 = sin(uv.y * 4.0 + iTime * 0.5) * 0.3 + 0.3;\n    \n    // Add noise and turbulence\n    vec2 st = uv * 16.0 + mouse.xy * 8.0;\n    float noiseVal = noise(st);\n    float turb = turbulent(vec2(uv.x * 4.0, uv.y * 4.0));\n    \n    // Combine layers with color cycling\n    float hue = (iTime * 0.1) + (noiseVal * 0.5) + (mouse.z * 0.3);\n    vec3 color = hsl2rgb(vec3(hue, 1.0, 0.5));\n    \n    // Add interactivity with mouse\n    float interact = length(uv - mouse.xy) * 0.5;\n    color *= mix(1.0, 0.5, smoothstep(0.0, 1.0, interact));\n    \n    return vec4(color, 1.0);\n}"
-}

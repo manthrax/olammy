@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create dynamic sine wave patterns\n    float time = iTime * 0.5;\n    \n    // Wave parameters\n    vec2 st = uv * 10.0 + time;\n    float waveX = sin(st.x * 0.5 + time) * 0.5 + 0.5;\n    float waveY = sin(st.y * 0.7 - time) * 0.5 + 0.5;\n    \n    // Combine waves and add turbulence\n    float d = (waveX + waveY) * 0.5;\n    d += turbulent(vec2(uv * 4.0 + time)) * 0.3;\n    \n    // Convert to HSL color with dynamic shifts\n    vec3 hslColor = vec3(\n        mod(time * 0.1, 1.0),  // Hue\n        0.7 + d * 0.3,       // Saturation\n        0.5                  // Lightness\n    );\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
-}

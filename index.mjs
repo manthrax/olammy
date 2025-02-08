@@ -145,7 +145,7 @@ const upload = multer({ storage });
 
 // Upload endpoint
 app.post('/upload', upload.single('file'), (req, res) => {
-  res.status(201).send('File uploaded successfully');
+  res.status(201).json({ filename: req.file.filename });//send('File uploaded successfully');
   rebuildDirectoryJSON();
 });
 

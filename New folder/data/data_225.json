@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    float time = iTime * 0.5;\n    \n    // Create base wave pattern with noise\n    vec3 waves = sin(uv.xyy * 10.0 + time) * 0.5 + 0.5;\n    waves += noise(vec3(uv, time)) * 0.4;\n    \n    // Add turbulence for more complex movement\n    float turb = turbulent(vec2(uv.x * 0.5 + time, uv.y * 0.5));\n    waves += sin(time + uv.y * 8.0) * 0.3;\n    \n    // Create color shifts using HSL\n    vec3 color = hsl(waves.x * 0.6 + 0.3, 0.7, 0.5);\n    color *= hsl2rgb(vec3(time * 0.1, 0.8, 0.9));\n    \n    // Combine effects for final output\n    return vec4(color * (waves.x + waves.y) * 0.6, 1.0);\n}"
-}

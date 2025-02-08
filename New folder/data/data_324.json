@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create a base noise pattern with time offset\n    float noiseValue = noise(uv * 5.0 + vec2(iTime, iTime));\n    \n    // Generate dynamic color using HSL to RGB conversion\n    vec3 color = hsl2rgb(vec3(\n        mod(iTime * 0.1, 1.0),  // Hue that changes over time\n        0.7,                    // Saturation\n        0.5 + noiseValue * 0.4  // Lightness with noise variation\n    ));\n    \n    // Add turbulence for more dynamic movement\n    float turb = turbulent(uv * 3.0 + vec2(iTime));\n    \n    // Combine noise and turbulence effects\n    color *= mix(1.0, 0.5, abs(turb) * 0.5 + 0.5);\n    \n    return vec4(color, 1.0);\n}"
-}

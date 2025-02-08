@@ -253,28 +253,28 @@ async function sendChat() {
     sendBtn.disabled = false;
 }
 
-async function sendMessage() {
+async function sendMessage(message = userInput.innerText.trim(), generator=activeGenerator) {
 
-    let message = userInput.innerText.trim();
+    //let message = userInput.innerText.trim();
 
     if (!message)
         return;
 
-    message = activeGenerator.generator(message);
+    message = generator.generator(message);
 
     let doRandomGen = (result) => {
 
         let rseed = '' + ((Math.random() * 100000) | 0);
         send({
-            message: rseed + " Generate a short random prompt for an interesting fragment shader!",
+            message: rseed + " Generate a short simple prompt for an interesting fragment shader!",
             onResult: (result) => {
                 let lines = result.lines;
                 let seed = lines.pop();
                 if (seed.split(' ').length >= 3) {
-                    let message = activeGenerator.generator(seed);
+                    let message = generator.generator(seed);
                     send({
                         message,
-                        system: activeGenerator.system,
+                        system: generator.system,
                         onShaderCompiled,
                         onShaderCrashed
                     })
@@ -284,10 +284,12 @@ async function sendMessage() {
     }
 
     let onShaderCompiled = (result) => {
-        uploadJSON({
+        let p = {
             src: glslElement.innerText,
-        })
-        addPreviewer(glslElement.innerText);
+        }
+        addPreviewer(p.src);
+        uploadJSON(p);
+        
         doRandomGen(result)
     }
     let onShaderCrashed = (result) => {
@@ -295,7 +297,7 @@ async function sendMessage() {
     }
     send({
         message,
-        system: activeGenerator.system,
+        system: generator.system,
         onShaderCompiled,
         onShaderCrashed
     });
@@ -356,6 +358,7 @@ let fraggles = {}
 
 
 let load = async (f, i) => {
+    try{
     let fraggle = await (await fetch("data/" + f)).json()
     if (fraggles[fraggle.src]) {
         console.log("Found duplicate:", f)
@@ -374,6 +377,10 @@ let load = async (f, i) => {
     }
     if (i == galleryDir.length - 1) {
         //console.log(JSON.stringify(artifacts))
+    }
+    }
+    catch(e){
+        console.warn(e);
     }
 }
 
@@ -409,6 +416,12 @@ async function uploadJSON(jsonObject, filename="data.json") {
         if (response.ok) {
             console.log("JSON uploaded successfully!");
             saveBtn.style.display = 'none';
+                    
+              const result = await response.json();
+              console.log('Uploaded successfully:', result.filename);
+           //  alert(`File uploaded. New filename: ${result.filename}`);
+            artifacts[result.filename] = jsonObject;
+            jsonObject.fileName = result.filename;
         } else {
             console.error("Upload failed:", await response.text());
         }

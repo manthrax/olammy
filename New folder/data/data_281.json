@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create time-varying offset for pixel movement\n    vec2 offset = vec2(\n        sin(iTime + uv.y * 10.0) * 0.05,\n        cos(iTime + uv.x * 10.0) * 0.05\n    );\n    \n    // Calculate new UV coordinates with offset\n    vec2 newUV = uv + offset;\n    \n    // Create color transitions using HSL to RGB conversion\n    vec3 baseColor = hsl(180.0, 1.0, 0.5);\n    float colorVariation = noise(newUV * 10.0 + iTime) * 0.5 + 0.5;\n    \n    // Mix colors with turbulence for dynamic effect\n    vec3 finalColor = mix(\n        baseColor,\n        hsl(240.0, 1.0, 0.5),\n        turbulent(newUV * 10.0 + iTime) * 0.5 + 0.5\n    );\n    \n    // Output the color with some transparency\n    return vec4(finalColor, 1.0);\n}"
-}

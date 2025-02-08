@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV to polar coordinates\n    vec2 st = uv * 2.0 - 1.0;\n    float theta = atan2(st.y, st.x);\n    float r = length(st);\n    // Create interweaving sine patterns with dynamic scaling\n    float scale = sin(iTime) * 0.5 + 0.5;\n    float pattern1 = sin(theta * 3.0 - iTime) * scale;\n    float pattern2 = sin(theta * 5.0 + iTime) * scale;\n    // Combine patterns and create color\n    float value = (sin(r * 4.0 + pattern1 * 2.0) + sin(r * 6.0 + pattern2 * 2.0)) / 2.0;\n    \n    // Create shifting hues using HSL\n    float hue = iTime * 2.0 + theta * 3.0;\n    vec3 color = hsl2rgb(vec3(hue, 1.0, 0.5 + sin(iTime) * 0.5));\n    return vec4(color * (value * 0.5 + 0.5), 1.0);\n}"
-}

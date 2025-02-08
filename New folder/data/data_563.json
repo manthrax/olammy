@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create mirrored patterns using symmetry\n    vec2 st = fract(uv * 8.0);\n    st = abs(st - 0.5) * 2.0;\n    \n    // Add rotating sine wave movement\n    float time = iTime * 0.1;\n    float sinX = sin(time + uv.x * pi);\n    float sinY = cos(time + uv.y * pi);\n    \n    // Combine mirrored patterns with sine waves\n    vec2 motion = vec2(sinX, sinY) * 0.5 + 0.5;\n    vec2 finalUV = mix(uv, motion, 0.5);\n    \n    // Add turbulence for dynamic effect\n    float turb = turbulent(finalUV * 4.0) * 0.5 + 0.5;\n    \n    // Create smooth color transitions using HSL\n    vec3 hslColor = vec3(turb * 360.0, 1.0, 0.5);\n    vec3 rgbColor = hsl2rgb(hslColor);\n    \n    return vec4(rgbColor, 1.0);\n}"
-}

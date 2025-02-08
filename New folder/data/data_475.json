@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Center coordinates\n    vec2 p = uv - 0.5;\n    \n    // Create rotation effect\n    float angle = atan(p.y, p.x);\n    angle += iTime * 0.5; // Add time-based rotation\n    \n    // Calculate distance from center\n    float dist = length(p);\n    \n    // Create color transitions using HSL\n    vec3 color1 = hsl(angle / (2.0 * pi) + 0.5, 0.7, 0.6);\n    vec3 color2 = hsl((angle + iTime * 0.1) / (2.0 * pi) + 0.5, 0.7, 0.6);\n    \n    // Mix colors based on distance\n    vec3 finalColor = mix(color1, color2, dist);\n    \n    // Add turbulence effect\n    float turb = turbulent(vec3(p * 4.0, iTime * 0.1));\n    finalColor *= 0.5 + 0.5 * sin(iTime + turb * 2.0);\n    \n    return vec4(finalColor, 1.0);\n}"
-}

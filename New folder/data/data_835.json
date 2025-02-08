@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Scale and tile the UV coordinates\n    vec2 st = uv * 10.0;\n    \n    // Create a grid pattern using sine waves\n    float x = sin(st.x + iTime) * 0.5 + 0.5;\n    float y = sin(st.y + iTime) * 0.5 + 0.5;\n    \n    // Combine the sine waves for a pulsating effect\n    float pattern = (x + y) * 0.5;\n    \n    // Add some noise to create variation\n    vec2 noiseUV = uv * 100.0;\n    float n = noise(noiseUV);\n    pattern += n * 0.3;\n    \n    // Create a shifting hue effect\n    float hue = iTime * 0.5 + (uv.x + uv.y) * 2.0;\n    vec3 color = hsl(hue, 1.0, 0.5);\n    \n    // Convert HSL to RGB and apply the pattern\n    vec3 finalColor = hsl2rgb(color) * pattern;\n    \n    return vec4(finalColor, 1.0);\n}"
-}

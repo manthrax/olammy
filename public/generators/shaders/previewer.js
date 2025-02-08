@@ -240,6 +240,7 @@ events.listen('frame', () => {
     lastTime = time;
 
     mouseScroll();
+    if(false)
     for (let i = 0; i < previewers.length; i++) {
         let p = previewers[i];
         p.mesh.visible = distMax(p.mesh.position,controls.target) < 10;

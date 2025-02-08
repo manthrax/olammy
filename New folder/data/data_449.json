@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar form\n    float a = atan2(uv.y, uv.x);\n    float r = length(uv);\n    \n    // Create swirling pattern using sine waves and time\n    a += sin(a * 5.0 + iTime) * 0.2;\n    a += iTime * 0.1; // Add time-based rotation\n    \n    // Generate color transitions based on angle and radius\n    vec3 color = hsl(\n        sin(iTime * 0.5 + a * 4.0) * 0.5 + 0.5, // Hue variation over time\n        0.7, // Saturation\n        0.5 // Lightness\n    );\n    \n    // Add turbulence for more dynamic patterns\n    vec3 noisePattern = vec3(turbulent(vec3(uv * 10.0, iTime)));\n    color = mix(color, noisePattern, 0.2);\n    \n    return vec4(color, 1.0);\n}"
-}

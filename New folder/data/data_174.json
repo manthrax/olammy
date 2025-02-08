@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar coordinates centered at (0.5, 0.5)\n    vec2 centeredUV = uv - 0.5;\n    float radius = length(centeredUV);\n    \n    // Add pulsation effect using time\n    radius += sin(iTime * 2.0) * 0.5;\n    \n    // Calculate angle for color variation\n    float angle = atan2(centeredUV.y, centeredUV.x);\n    \n    // Create color based on distance from center and time\n    vec3 hsvColor = vec3(\n        mod(radius * 5.0 + iTime, 1.0),  // Hue varies with radius and time\n        0.8,                              // Saturation\n        sin(radius * 2.0) * 0.5 + 0.5     // Value varies with radius\n    );\n    \n    return vec4(hsv2rgb(hsvColor), 1.0);\n}"
-}

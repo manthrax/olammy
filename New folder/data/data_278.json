@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Rotate UV coordinates over time\n    float angle = sin(iTime * 0.5) * 0.5 + 0.5;\n    vec2 rotatedUv = vec2(\n        uv.x * cos(angle) - uv.y * sin(angle),\n        uv.x * sin(angle) + uv.y * cos(angle)\n    );\n    \n    // Create dynamic line pattern using turbulence\n    float t = turbulent(rotatedUv * 10.0 + iTime);\n    vec3 color = hsl2rgb(vec3(\n        mod(turbulent(uv * 5.0 + iTime) * 2.0, 1.0),\n        0.7,\n        0.6\n    ));\n    \n    // Add noise interaction\n    vec4 noiseSample = texture(iChannel0, rotatedUv * 0.5 + 0.5);\n    float finalIntensity = t * (1.0 - length(noiseSample.rgb));\n    \n    return vec4(color * finalIntensity, 1.0);\n}"
-}

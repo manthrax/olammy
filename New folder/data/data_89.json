@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec2 p = uv * 0.1 + vec2(sin(iTime * 0.5), cos(iTime * 0.3));\n    vec2 q = uv * 0.1 + vec2(cos(iTime * 0.7), sin(iTime * 0.4));\n    \n    float noiseX = noise(p);\n    float noiseY = noise(q);\n    \n    vec3 color = hsv2rgb(vec3(\n        mod(noiseX * 5.0 + iTime * 0.1, 1.0),\n        0.7 + noiseY * 0.3,\n        0.8\n    ));\n    \n    float t = turbulent(vec2(noiseX * 10.0, noiseY * 10.0));\n    color *= vec3(0.5 + t * 0.5);\n    \n    return vec4(color, 1.0);\n}"
-}

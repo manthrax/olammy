@@ -1,3 +1,0 @@
-{
-  "src": "\n//prompt: something wonderful\nvec4 Effect2(vec2 uv) {\n    vec2 st = uv * 2.0;\n    st.x += sin(iTime) * 1.5;\n    st.y += cos(iTime * 0.75) * 1.5;\n    \n    float t = iTime * 0.3;\n    float a = turbulent(st) * 2.0;\n    \n    vec3 color = hsl2rgb(vec3(\n        (a + sin(a * 4.0)) * 0.25 + t * 0.1,\n        0.85,\n        0.7\n    ));\n    \n    return vec4(color, exp(-length(st) * 0.3));\n}\n"
-}

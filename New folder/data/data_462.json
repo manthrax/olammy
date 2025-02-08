@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    float time = iTime * 0.5 + 1.387;\n    \n    // Rotating sine wave patterns\n    vec2 st = uv - 0.5;\n    float angle = time * pi;\n    float s = sin(uv.x * 4.0 + angle) * cos(time * 2.0);\n    float c = cos(uv.y * 4.0 + angle) * sin(time * 2.0);\n    \n    // Dynamic RGB shifts\n    vec3 color = hsl2rgb(vec3(\n        sin(time * 0.5 + st.x * 2.0) * 0.5 + 0.5,\n        cos(time * 0.7 + st.y * 2.0) * 0.5 + 0.5,\n        0.8\n    ));\n    \n    // Add noise and turbulence\n    float noiseVal = noise(vec3(uv, time)) * 0.4;\n    color += vec3(s * c + noiseVal);\n    \n    return vec4(color, 1.0);\n}"
-}

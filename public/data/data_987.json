@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV to polar coordinates for rotation effect\n    float angle = atan2(uv.y, uv.x) + iTime * 2.0;\n    float radius = length(uv);\n    \n    // Create multiple rotating rings with pulsating effects\n    radius += sin(radius * 10.0 + iTime) * 0.2;\n    radius += sin(mod(angle, pi / 4.0)) * 0.3;\n    radius += sin(mod(angle * 8.0, pi)) * 0.15;\n    // Create pulsating color effect\n    vec3 color = hsl2rgb(vec3(\n        fract(radius * 0.1 + iTime) * pi,\n        0.8,   // Saturation\n        0.5    // Lightness\n    ));\n    return vec4(color * smoothstep(0.0, 1.0, 1.0 - length(uv)), 1.0);\n}"
+}

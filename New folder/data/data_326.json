@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar form\n    float r = length(uv);\n    float theta = atan2(uv.y, uv.x) * 6.0 + iTime * 0.5;\n    \n    // Create hexagonal pattern using sine function\n    float d = 1.0 / (r * cos(theta));\n    \n    // Add noise and turbulence for dynamic effect\n    vec3 noiseVal = vec3(noise(uv * 2.0 + sin(iTime)));\n    float turb = turbulent(uv * 4.0 + iTime);\n    \n    // Create pulsating color using HSL to RGB conversion\n    vec3 color = hsl2rgb(vec3(\n        sin(r * 5.0 + theta) * 0.5 + 0.5,\n        1.0 - abs(sin(iTime * 0.5)),\n        0.5 + 0.5 * sin(iTime * 0.5)\n    ));\n    \n    // Combine all elements for final effect\n    return vec4(color * (d + noiseVal.x) * turb, 1.0);\n}"
-}

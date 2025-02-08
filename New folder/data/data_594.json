@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Animate position over time\n    vec2 st = uv + sin(iTime * 0.5 + uv.xyy * 10.0).xy;\n    \n    // Create flowing noise pattern with multiple frequencies\n    float n1 = noise(st * 3.0 + iTime);\n    float n2 = noise(st * 6.0 + iTime * 0.7);\n    float pattern = sin(n1 * 0.5 + n2) * 0.5 + 0.5;\n    \n    // Create color shifts using HSL\n    vec3 colorHSL;\n    colorHSL.x = (sin(iTime * 0.2 + st.x * 4.0) + sin(st.y * 3.0)) * 0.5 + 0.5;\n    colorHSL.y = 0.7 + pattern * 0.3;\n    colorHSL.z = 0.5 + turbulent(uv * 2.0) * 0.5;\n    \n    // Convert to RGB and return\n    return vec4(hsl2rgb(colorHSL), 1.0);\n}"
-}

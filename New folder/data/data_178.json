@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec2 pos = uv * 2.0 - 1.0;\n    \n    float time = iTime * 0.5;\n    float angle = cos(time) * length(pos);\n    angle += sin(time + length(uv)) * fract(atan2(pos.y, pos.x));\n    \n    float dist = length(pos);\n    vec3 color = hsl2rgb(vec3(dist * 4.0, 1.0 - time * 0.5, 1.0));\n    \n    float noiseVal = noise(vec2(angle, dist + time));\n    angle += noiseVal * 0.5;\n    \n    vec2 finalPos = vec2(cos(angle), sin(angle)) * (dist + noiseVal * 0.5);\n    \n    return vec4(color, 1.0);\n}"
-}

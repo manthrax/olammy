@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create a time-based offset for animation\n    float time = iTime * 0.5;\n    \n    // Create a base pattern using sine waves and time\n    vec2 st = uv + vec2(0.0, time);\n    \n    // Add turbulence to create dynamic movement\n    float turb = turbulent(st * 10.0 + vec2(time));\n    \n    // Calculate hue based on position and time\n    float hue = mod((st.y * 5.0) + time, 1.0);\n    \n    // Create a vibrant color using HSL to RGB conversion\n    vec3 color = hsl2rgb(vec3(hue, 0.7, 0.6));\n    \n    // Combine the color with turbulence for dynamic effect\n    color *= 0.5 + turb * 0.5;\n    \n    return vec4(color, 1.0);\n}"
-}

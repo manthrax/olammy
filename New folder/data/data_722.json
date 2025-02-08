@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // code here\n}\nfloat theta = atan(uv.y, uv.x) + iTime * 0.2;"
-}

@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create base color from time-based sine waves\n    vec3 c = vec3(\n        sin(iTime * 0.5 + uv.x * 10.0) * 0.5 + 0.5,\n        noise(uv * 200.0 + iTime) * 0.5 + 0.5,\n        noise(uv * 100.0 + iTime * 3.0) * 0.5 + 0.5\n    );\n    \n    // Add turbulence for more complex patterns\n    c += vec3(\n        turbulent(uv * 50.0 + iTime),\n        turbulent(uv * 75.0 - iTime),\n        turbulent(uv * 100.0 + iTime * 2.0)\n    ) * 0.3;\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(c), 0.9);\n}"
+}

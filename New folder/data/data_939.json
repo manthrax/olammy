@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Translate UV coordinates to center and scale appropriately\n    vec2 st = uv * 2.0 - 1.0;\n    \n    // Convert to polar coordinates\n    float theta = atan2(st.y, st.x);\n    float r = length(st);\n    \n    // Create rotating pattern using time\n    theta += iTime * 3.0; // Speed up rotation\n    \n    // Add pulsing effect with sine wave\n    r *= sin(iTime) + 1.5;\n    \n    // Use noise to create turbulence in the pattern\n    float noiseVal = turbulent(vec2(theta, r));\n    \n    // Create color wheel using HSL colors\n    vec3 color = hsl2rgb(vec3(\n        theta * 0.5 + iTime * 0.1,\n        1.0,\n        0.5 + noiseVal * 0.5\n    ));\n    \n    return vec4(color, 1.0);\n}"
-}

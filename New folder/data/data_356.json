@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create base turbulence pattern\n    float t1 = turbulent(uv * 0.5 + iTime);\n    float t2 = turbulent(uv * 0.7 + vec2(sin(iTime), cos(iTime)));\n    \n    // Compute color components using sine functions\n    vec3 color = vec3(\n        sin(t1 * 4.0 + iTime) * 0.5 + 0.5,\n        sin(t2 * 6.0 + iTime * 0.7) * 0.5 + 0.5,\n        sin((t1 + t2) * 8.0 + iTime * 1.3) * 0.5 + 0.5\n    );\n    \n    // Convert to HSL and back to RGB for more vibrant colors\n    vec3 hslColor = vec3(\n        0.5 + t1 * 0.2,\n        0.8,\n        0.5 + abs(sin(iTime * 0.3 + t2)) * 0.5\n    );\n    \n    color = hsl2rgb(hslColor);\n    \n    return vec4(color, 0.8);\n}"
-}

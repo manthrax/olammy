@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create pulsating circles pattern\n    vec2 center = (uv - 0.5) * 2.0;\n    float dist = length(center);\n    \n    // Add time-based pulsation\n    float pulse = sin(iTime * 0.5 + dist * 10.0) * 0.5 + 0.5;\n    float alpha = smoothstep(0.7, 1.3, dist + pulse + sin(iTime * 2.0) * 0.2);\n    \n    // Create color transitions using HSL\n    vec3 hslColor = vec3((iTime * 0.1) % 1.0, 1.0, 0.5);\n    vec3 rgbColor = hsl2rgb(hslColor);\n    \n    // Add noise for extra detail\n    float noiseValue = noise(vec2(iTime * 0.1, uv.x * 4.0 + iTime)) * 0.2;\n    \n    return vec4(rgbColor * (alpha + noiseValue * 0.3), alpha);\n}"
-}

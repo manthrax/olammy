@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create three overlapping sine waves with different frequencies and amplitudes\n    float wave1 = sin(uv.x * 8.0 - iTime * 2.0) * 0.5;\n    float wave2 = sin(uv.x * 4.0 + iTime * 3.0) * 0.7;\n    float wave3 = sin(uv.x * 2.0 - iTime * 1.5) * 1.0;\n    \n    // Combine waves and add some turbulence\n    float combined = (wave1 + wave2 + wave3) * 0.5;\n    combined += turbulent(vec2(uv.x, iTime * 0.1)) * 0.2;\n    \n    // Create color transition from cyan to magenta using HSL\n    vec3 colorHSL = vec3(180.0 + sin(iTime) * 60.0, 1.0, 0.5);\n    vec3 finalColor = hsl2rgb(colorHSL) * (combined * 0.5 + 0.5);\n    \n    return vec4(finalColor, 1.0);\n}"
-}

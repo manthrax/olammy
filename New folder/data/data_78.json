@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Center coordinates and scale\n    vec2 st = (uv - 0.5) * 3.0;\n    \n    // Polar coordinates\n    float r = length(st);\n    float a = atan2(st.y, st.x) + iTime * 0.5;\n    \n    // Add turbulence to both radius and angle\n    float turb = turbulent(vec2(r, a)) * 0.5 + 0.5;\n    turb *= sin(iTime * 0.3 + r * 10.0);\n    \n    // Create color variations using HSL\n    vec3 color1 = hsl(a * 0.1 + iTime * 0.2, 0.8, 0.6);\n    vec3 color2 = hsl(a * 0.15 - iTime * 0.3, 0.7, 0.5);\n    \n    // Combine colors with noise\n    vec3 finalColor = mix(color1, color2, turb);\n    finalColor *= sin(r * 4.0 + iTime) * 0.5 + 0.5;\n    finalColor += noise(st * 0.5 + iTime) * 0.3;\n    \n    return vec4(finalColor, 1.0);\n}"
-}

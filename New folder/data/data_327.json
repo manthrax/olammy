@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create base noise pattern with time variation\n    float noise1 = turbulent(uv * 5.0 + iTime);\n    float noise2 = turbulent(uv * 3.0 + iTime * 0.5);\n    \n    // Generate color components using HSL colors\n    vec3 color1 = hsl(noise1 * 0.6 + 0.4, 0.8, 0.5);\n    vec3 color2 = hsl((noise2 * 0.6 + 0.4) + iTime * 0.1, 0.7, 0.6);\n    \n    // Combine colors with time-based blending\n    vec3 finalColor = mix(color1, color2, sin(iTime * 0.5) * 0.5 + 0.5);\n    \n    // Add pulsating glow effect using alpha channel\n    float glow = turbulent(uv * 2.0 + iTime) + length(uv) * 0.5;\n    finalColor *= clamp(glow, 0.0, 1.0);\n    \n    return vec4(finalColor, clamp(glow * 0.5 + 0.5, 0.0, 1.0));\n}"
-}

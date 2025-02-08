@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Rotate UV coordinates\n    float t = iTime * 0.5;\n    vec2 q = uv - 0.5;\n    q = mat2(cos(t), sin(t), -sin(t), cos(t)) * q;\n    \n    // Create stripe pattern with sine waves and turbulence\n    float v = sin(q.y * 10.0 + t) + turbulent(q.xy * 4.0 + vec2(sin(t), cos(t))) * 0.5;\n    v = sin(v * pi + t) * 0.5 + 0.5;\n    \n    // Convert to HSL color with dynamic shifts\n    vec3 c = hsl2rgb(vec3(\n        sin(q.x * 5.0 + t) * 0.5 + 0.5,   // Hue variation\n        1.0,                               // Full saturation\n        v                                  // Intensity modulation\n    ));\n    \n    return vec4(c, 1.0);\n}"
-}

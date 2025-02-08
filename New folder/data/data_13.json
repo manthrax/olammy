@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    float time = iTime * 0.1;\n    \n    // Create a warping effect using multiple frequencies and noise\n    vec2 st = uv;\n    \n    // Add time-based distortion\n    float freq = length(sin(time));\n    st.x += sin(st.y * 3.14 + time) * 0.5;\n    st.y += cos(st.x * 3.14 + time * 0.5) * 0.5;\n    \n    // Add more complex warping using noise\n    float noiseVal = noise(vec2(sin(st.x), cos(st.y)));\n    \n    vec4 result = vec4(\n        sin(st.x * 3.14 + time) * 0.5,\n        cos(st.y * 3.14 + time * 0.5) * 0.5,\n        noiseVal,\n        1.0\n    );\n    \n    return result;\n}"
-}

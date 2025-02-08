@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Scale and animate UV coordinates\n    vec2 st = uv * 10.0 + iTime / 2.0;\n    \n    // Create turbulence pattern\n    float t = turbulent(st);\n    t += turbulent(st * 3.0 + 1.0) * 0.5;\n    \n    // Generate color from HSL values\n    vec3 color = hsl(\n        sin(t * 4.0 + iTime) * 0.5 + 0.5,\n        abs(sin(iTime / 2.0)) * 0.7 + 0.3,\n        abs(cos(t * 2.0 + iTime)) * 0.6 + 0.4\n    );\n    \n    // Add some color variation\n    color = mix(color, hsl(\n        sin(t * 5.0 + iTime) * 0.5 + 0.5,\n        abs(sin(iTime / 3.0)) * 0.7 + 0.3,\n        abs(cos(t * 4.0 + iTime)) * 0.6 + 0.4\n    ), 0.3);\n    \n    return vec4(color, 1.0);\n}"
-}

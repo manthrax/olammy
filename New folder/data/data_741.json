@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create moving sine wave patterns\n    float wave1 = sin(uv.x * 8.0 + iTime * 2.0);\n    float wave2 = sin(uv.y * 6.0 + iTime * 3.0);\n    \n    // Combine waves with noise texture\n    vec2 noiseUV = uv * 10.0;\n    float noiseValue = noise(noiseUV) * 0.5 + 0.5;\n    \n    // Mix waves and noise\n    float pattern = (wave1 + wave2) * noiseValue;\n    \n    // Add turbulence for more dynamic movement\n    vec3 turbPos = vec3(uv.x, uv.y, iTime);\n    float turb = turbulent(turbPos * 0.5);\n    \n    // Combine everything with color transformation\n    vec3 color = hsl2rgb(vec3(\n        mod(iTime * 0.1 + pattern * 0.5, 1.0),\n        0.7,\n        0.6\n    )) * (1.0 + turb * 0.3);\n    \n    return vec4(color, 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create time-varying waves\n    float wave1 = sin(uv.x * 10.0 + iTime) * 0.5;\n    float wave2 = sin(uv.y * 5.0 - iTime * 3.0) * 0.3;\n    \n    // Combine waves and add noise for texture\n    float value = (wave1 + wave2) * 0.5 + noise(vec2(uv.x*5.0, uv.y*5.0)) * 0.3;\n    \n    // Create color transitions using HSL\n    vec3 color = hsl(\n        mod(iTime * 0.2 + value * 0.5, 1.0),  // Hue variation over time and space\n        0.7,                                   // Saturation\n        0.6                                    // Lightness\n    );\n    \n    return vec4(color, 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Convert to polar coordinates\n    float theta = atan2(uv.y, uv.x);\n    float r = length(uv);\n    // Add time-based wobble to angle and radius\n    theta += sin(r * 5.0 + iTime) * 0.5;\n    theta += turbulent(vec3(theta, r, iTime * 0.1)) * 0.2;\n    \n    r += sin(iTime * 2.0 + theta * 4.0) * 0.3;\n    r = mod(r, 2.0);\n    // Create color based on polar coordinates\n    vec3 color = hsl2rgb(vec3(\n        (theta / (2.0 * PI) + 0.5) * 0.7 + 0.3,\n        1.0 - abs(r - 1.0),\n        0.5\n    ));\n    return vec4(color, 1.0);\n}"
-}

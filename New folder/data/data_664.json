@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create radial gradient from center\n    vec2 pos = uv - 0.5;\n    float dist = length(pos);\n    dist *= 10.0; // Scale the distance\n    \n    // Add oscillating sine wave effect\n    float timeFactor = sin(iTime * 4.0) * 0.5 + 0.5;\n    float value = dist + sin(dist * 2.0 + iTime * 2.0) * 0.5;\n    \n    // Create color transitions using HSL\n    vec3 color = hsl(value * 0.6 + timeFactor, 1.0, 0.5);\n    \n    // Add noise for texture\n    float noiseValue = noise(uv * 8.0 + iTime) * 0.2;\n    value += noiseValue;\n    \n    // Final color with alpha\n    return vec4(hsl2rgb(vec3(value * 0.6 + timeFactor, 1.0, 0.5)), 1.0);\n}"
-}

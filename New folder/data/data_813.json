@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // code here\n}\nfloat theta = atan2(uv.y - 0.5, uv.x - 0.5) + pi / 6.0 + iTime * 0.5;\nvec2 st = vec2(\n    cos(theta) * length(uv - 0.5),\n    sin(theta) * length(uv - 0.5)\n);\nst = st * 12.0;\nst = mod(st + 3.0, 6.0) - 3.0;\nfloat d = length(st);\nd += 0.1 * turbulent(vec3(st + iTime, 0.0));\nd += 0.2 * noise(vec3(st * 0.5 + iTime, 0.0));\nfloat gradient = clamp(1.0 - d / 2.0, 0.0, 1.0);\nvec3 color = hsl2rgb(vec3(gradient * 0.6 + iTime * 0.5, 0.8, 0.7));\nreturn vec4(color, 1.0);"
-}

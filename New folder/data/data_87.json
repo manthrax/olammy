@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Rotate coordinates over time\n    float t = iTime * 0.5;\n    vec2 rotated = uv * mat2(cos(t), sin(t), -sin(t), cos(t));\n    \n    // Scale and create noise patterns\n    vec2 scaled = rotated * 5.0;\n    float n1 = noise(scaled);\n    float n2 = turbulent(vec3(scaled, t));\n    \n    // Create color variations using HSL\n    vec3 hslColor = vec3(\n        mod(t + n1 * 2.0, 1.0),\n        0.7,\n        0.5 + n2 * 0.4\n    );\n    \n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec2 timeUv = uv * 0.1 + iTime * 0.5;\n    \n    // Base noise layer\n    float n1 = noise(uv);\n    float n2 = noise(timeUv);\n    \n    // Add multiple noise layers with different scales and offsets\n    float noiseValue = n1 * 0.7 + n2 * 0.3;\n    \n    // Apply turbulence for more complex patterns\n    noiseValue += turbulent(vec2(uv.x * 1.5, uv.y * 1.5)) * 0.4;\n    \n    // Convert to HSL and adjust colors\n    vec3 color = hsl2rgb(hsv2rgb(vec3(\n        noiseValue * 0.5 + 0.5,   // Hue variation\n        0.8 + noiseValue * 0.2,  // Saturation\n        0.4 + noiseValue * 0.1   // Value\n    )));\n    \n    return vec4(color, 1.0);\n}"
-}

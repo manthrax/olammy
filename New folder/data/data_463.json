@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create base color with HSL\n    vec3 color = hsl2rgb(vec3(0.5 * uv.x + 0.5, 1.0, 0.5));\n    \n    // Add time-based wave pattern\n    float wave1 = sin(uv.x * 4.0 + iTime) * 0.2;\n    float wave2 = sin(uv.y * 4.0 - iTime) * 0.3;\n    float wave = (wave1 + wave2) * 0.5;\n    \n    // Add noise and turbulence\n    vec3 noisePattern = vec3(turbulent(vec3(uv.x * 2.0, uv.y * 2.0, iTime)));\n    color += noisePattern * 0.4;\n    \n    // Create flowing effect by mixing colors with time\n    float hueFlow = (uv.x + uv.y) * 0.5 + iTime * 0.1;\n    vec3 finalColor = mix(color, hsl2rgb(vec3(hueFlow - 0.5, 1.0, 0.5)), 0.4);\n    \n    return vec4(finalColor, 1.0);\n}"
-}

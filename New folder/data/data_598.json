@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Rotate UV coordinates over time\n    float angle = sin(iTime * 0.5);\n    vec2 rotatedUV = cos(angle) * uv + sin(angle) * (uv.yx * vec2(1,-1));\n    \n    // Create base color using distance from center and time\n    float dist = length(rotatedUV - 0.5);\n    vec3 baseColor = hsl(dist * pi, 0.7, 0.5);\n    \n    // Add dynamic shifts to hue and saturation using turbulence\n    float t1 = turbulent(rotatedUV * 10.0 + iTime) * 0.5;\n    float t2 = turbulent(rotatedUV * 20.0 - iTime) * 0.3;\n    \n    vec3 color = hsl(\n        baseColor.x + t1,\n        baseColor.y + t2,\n        0.5\n    );\n    \n    return vec4(hsl2rgb(color), 1.0);\n}"
-}

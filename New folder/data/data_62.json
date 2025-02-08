@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    // Create a rotating color wheel effect\n    float time = iTime * 0.5;\n    \n    // Generate base pattern using polar coordinates\n    vec2 st = uv;\n    float r = length(st);\n    float theta = atan2(st.y, st.x);\n    \n    // Add noise and turbulence\n    float pattern = sin(r * 10.0 + time) * cos(theta * 5.0 + time);\n    pattern += turbulent(vec3(uv * 4.0, time)) * 0.5;\n    \n    // Color transformation using HSL\n    vec3 color = hsl(\n        mod(pattern * 0.5 + time, 1.0),  // Hue\n        0.8,                              // Saturation\n        0.5 + pattern * 0.2               // Lightness\n    );\n    \n    return vec4(color, 1.0);\n}"
-}
