@@ -380,6 +380,8 @@ let load = async (f, i) => {
 let proms = galleryDir.map((f,i)=>load(f,i));
 
 await Promise.all(proms);
+
+console.log("Fraggles all loaded...")
 /*
 for(let i=0;i<galleryDir.length;i++)
     await load(galleryDir[i],i);
@@ -470,8 +472,27 @@ function fetchModels(onSuccess, onError) {
         onError && onError();
     }
     );
-
 }
+
+
+import {download} from "./generators/shaders/download.js";
+let infoPanel = document.getElementById('info-panel')
+events.listen('artifact-selected',(p)=>{
+    if(!p.fileName)
+        return;
+    let a = artifacts[p.fileName]
+    infoPanel.innerHTML += `<button id="save-info">💾</button><button id="close-info">⛔</button></br>
+`+a.src;
+    //infoPanel.innerText += "\n"+a.src;
+    document.getElementById('close-info').addEventListener('click',(e)=>{
+        infoPanel.innerHTML=infoPanel.innerText='';
+    })    
+    document.getElementById('save-info').addEventListener('click',(e)=>{
+        let a = artifacts[p.fileName];
+        
+        download(a.src,p.fileName)
+    })
+})
 
 fetchModels( (data) => {
     const modelList = document.getElementById('modelList');

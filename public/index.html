@@ -98,15 +98,13 @@
       z-index:10;
       left:10px;
       top:10px;
-      width: 400px;
-      height:600px;
+      min-width: 100px;
       align-items: center;
-      background:#00000033;
+      background:#000000bd;
       gap: 5px;
-      pointer-events:none;
       color:#04ffe2;
   
-      background-color: #f4f4f436;  /* Light grey background */
+      background-color: #f4f4f4cf;  /* Light grey background */
       border-left: 5px solid #f36d33;  /* Orange left border for style */
       color: #333;  /* Dark grey text color */
       font-family: 'Courier New', Courier, monospace;  /* Monospaced font for code */
@@ -115,6 +113,7 @@
       white-space: pre-wrap;  /* Maintains whitespace formatting */
       word-wrap: break-word;  /* Ensures long lines do not overflow */
 
+      /* pointer-events:none; */
       
     }
     #user-input {
@@ -149,7 +148,7 @@
     
     <!-- LEFT PANE (Canvas) -->
     <div id="left-pane">
-      <div id='info-panel'>TEST TEST</div>
+      <div id='info-panel' contentEditable=true>+,- time scale</br></div>
       <canvas id="three-canvas"></canvas>
     </div>
     

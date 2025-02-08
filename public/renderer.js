@@ -71,4 +71,5 @@ renderer.setAnimationLoop( (dt) => {
     renderer.render(scene, camera)
 }
 )
+
 export {THREE, renderer, scene, camera, controls, onShaderError, onFrame, events};
