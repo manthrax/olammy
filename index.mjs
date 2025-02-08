@@ -56,10 +56,10 @@ app.post('/chat', async (req, res) => {
       timeout: 30000,
       signal: controller.signal,
       options: {
-        seed: 123,
+        //seed: 123,
         temperature: 0.1,
-        max_tokens: 250,
-        top_k: 10,
+        max_tokens: 1000,
+        top_k: 20,
         top_p: 0.8
       }
     });

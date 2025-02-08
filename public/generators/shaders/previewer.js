@@ -2,29 +2,30 @@ import*as app from "./../../renderer.js"
 import generators from "./../../generators.js"
 let {THREE, scene, camera, controls, events, renderer} = app;
 
+
+
+
 let buf = new Float32Array(96*96*4);
 for(let i=0;i<buf.length;i++){
     buf[i]=Math.random();
-    if((i%4)==3){
+
+    if((i%4)==3)buf[i]=1;
+    /*
+    {
         buf[i-3] *= buf[i]
         buf[i-2] *= buf[i]
         buf[i-1] *= buf[i]
     }
-}
+   */
+} 
+
 let noiseTexture = new THREE.DataTexture(buf,96,96);
-
 //let noiseTexture = new THREE.TextureLoader().load('./noise.png')
-
-
 noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
 let defaultMaterial = new THREE.MeshBasicMaterial({
     map: noiseTexture
 });
 
-let planeMaterial = defaultMaterial;
-let plane = new THREE.Mesh(new THREE.PlaneGeometry(),planeMaterial);
-plane.frustumCulled = false;
-scene.add(plane);
 
 let timeScale = 1.;
 document.addEventListener('keydown', (e) => {
@@ -62,6 +63,12 @@ let previewShader = (func, vertexFn, fragmentFn) => {
         fragmentShader: fragmentFn(func)
     })
 }
+
+let planeMaterial = defaultMaterial;
+let plane = new THREE.Mesh(new THREE.PlaneGeometry(),planeMaterial);
+plane.frustumCulled = false;
+scene.add(plane);
+
 
 let previewers = [];
 let previewCount = 0;
@@ -172,7 +179,6 @@ let mouseDragViewport=()=>{
 
 let mouseScroll = () => {
 
-
     if (!canvasIsTarget)
         return
 
@@ -186,8 +192,6 @@ let mouseScroll = () => {
 
     if(!buttons)
         mouseDragViewport();
-
-
     
     if (!buttons) {
         prevButtons = null;
@@ -207,15 +211,26 @@ let mouseScroll = () => {
         prevButtons = buttons;
         let prv = previewers.slice();
         prv.forEach(a => a.cursorDistance = a.mesh.position.distanceTo(worldCursor));
-        prv.sort( (a, b) => a.cursorDistance - b.cursorDistance)
-        if (prv[0]) {
+        prv.sort( (a, b) => a.cursorDistance - b.cursorDistance);
+        let p = prv[0];
+        if (p && (p.cursorDistance<1) && (buttons==1)) {
             document.getElementById('info-panel').innerText = prv[0].fileName;
             events.dispatch('artifact-selected', prv[0]);
+            selectionPlane.visible = true;
+        }else{
+            events.dispatch('artifact-selected', undefined);
+            selectionPlane.visible = false;
         }
     }
 
 }
 
+let distMax=(a,b)=>{
+    let dx=Math.abs(a.x-b.x);
+    let dy=Math.abs(a.y-b.y);
+    let dz=Math.abs(a.z-b.z);
+    return Math.max(dx,dy,dz);
+}
 events.listen('frame', () => {
     let time = performance.now() / 1000;
     if (!lastTime)
@@ -227,7 +242,7 @@ events.listen('frame', () => {
     mouseScroll();
     for (let i = 0; i < previewers.length; i++) {
         let p = previewers[i];
-        p.mesh.visible = p.mesh.position.distanceTo(controls.target) < 10;
+        p.mesh.visible = distMax(p.mesh.position,controls.target) < 10;
     }
 }
 )

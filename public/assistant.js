@@ -451,11 +451,14 @@ async function deleteFile(filename) {
   }
 }
 
-for(let i=0;i<badFiles.length;i++){
-    
-     let f = badFiles[i];
-    await deleteFile(f)
-}
+events.listen('frame',async()=>{
+    if(badFiles.length){
+        infoPanel.innerText = `${badFiles.length} insurgent shaders detected.\nScheduling for deletion.`
+    }
+    while(badFiles.length){
+        await deleteFile(badFiles.shift())
+    }
+})
 
 saveBtn.addEventListener("click", uploadFile);
 modelList.addEventListener("change", (e) => {
@@ -478,6 +481,10 @@ function fetchModels(onSuccess, onError) {
 import {download} from "./generators/shaders/download.js";
 let infoPanel = document.getElementById('info-panel')
 events.listen('artifact-selected',(p)=>{
+    if(!p){
+        infoPanel.innerHTML = ''
+        return;
+    }
     if(!p.fileName)
         return;
     let a = artifacts[p.fileName]
