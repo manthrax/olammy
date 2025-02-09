@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Scale and shift coordinates for larger pattern\n    vec2 pos = uv * 8.0 + iTime;\n    \n    // Create base color using HSL\n    vec3 baseColor = hsl(pos.x, 0.5, 0.5);\n    \n    // Add time-based animation\n    float timeFactor = iTime * 0.1;\n    \n    // Use turbulence to create flowing pattern\n    float turb2D = turbulent(pos + timeFactor);\n    \n    // Create secondary color using HSV conversion\n    vec3 secondaryColor = hsv2rgb(vec3((pos.y + timeFactor) * 2.0, 0.7, 0.5));\n    \n    // Combine colors with noise modulation\n    vec3 finalColor = mix(baseColor, secondaryColor, turb2D);\n    \n    return vec4(finalColor, 1.0);\n}"
+}

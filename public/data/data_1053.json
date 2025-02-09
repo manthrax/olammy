@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar coordinates\n    vec2 centeredUV = uv * 2.0 - 1.0;\n    float theta = atan2(centeredUV.y, centeredUV.x);\n    float r = length(centeredUV);\n    // Add time-based rotation\n    theta += iTime * 0.5;\n    // Create color gradient based on polar coordinates\n    vec3 colorHSL = vec3(\n        mod(theta / (pi * 2.0) + noise(uv * 0.5), 1.0),  // Hue variation with noise\n        0.7,  // Saturation\n        0.5 + turbulent(vec2(r, theta)) * 0.4  // Value with turbulence\n    );\n    // Convert HSL to RGB and add pulsing effect\n    colorHSL.r = mod(colorHSL.r + sin(iTime * 0.3) * 0.5, 1.0);\n    vec3 finalColor = hsl2rgb(colorHSL);\n    return vec4(finalColor, 1.0);\n}"
+}

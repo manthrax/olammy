@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    float time = iTime * 0.5;\n    vec3 color = vec3(0.0);\n    \n    // Create shifting pattern using noise\n    float a = time + uv.x * 10.0;\n    float n = noise(vec2(a, uv.y * 10.0));\n    \n    // Add pulsing effect\n    float m = noise(vec2(time * 5.0, uv.x * 10.0));\n    \n    // Combine effects and convert to RGB\n    vec3 c = hsl(n * 360.0, 0.7, 0.5);\n    color = mix(vec3(0.0), hsl2rgb(c), n * 0.5 + m * 0.3);\n    \n    return vec4(color, 1.0);\n}"
+}

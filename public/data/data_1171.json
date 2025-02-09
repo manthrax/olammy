@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Scale coordinates for pattern frequency\n    vec2 pos = uv * 50.0;\n    \n    // Create dynamic noise patterns with time offset\n    float noise1 = turbulent(pos + iTime);\n    float noise2 = turbulent(pos * 0.5 + iTime * 0.3);\n    \n    // Create smooth color transitions using HSL\n    vec3 hslColor = vec3(\n        sin(pos.x * 0.1 + iTime) * 0.5 + 0.5,  // Hue variation across screen\n        0.8 + noise2 * 0.2,                       // Saturation with some noise variation\n        0.5 + noise1 * 0.5                        // Lightness modulation by noise\n    );\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
+}

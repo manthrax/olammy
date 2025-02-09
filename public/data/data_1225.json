@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar coordinates\n    float r = length(uv);\n    float theta = atan2(uv.y, uv.x) + iTime * 0.5; // Add rotation over time\n    \n    // Create color wheel effect using HSL colors\n    vec3 hslColor;\n    hslColor.x = fract(theta / (2.0 * pi)); // Hue based on angle\n    hslColor.y = 1.0 - r * 0.5;             // Saturation decreases with radius\n    hslColor.z = 0.5 + turbulent(vec3(theta, r, iTime)) * 0.2; // Lightness with noise\n    \n    // Convert HSL to RGB and return\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
+}

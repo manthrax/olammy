@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a position that moves over time\n    vec3 pos = vec3(uv * 5.0 + iTime, iTime);\n    \n    // Add some noise and turbulence to create dynamic patterns\n    float t1 = turbulent(pos);\n    float t2 = turbulent(pos + vec3(1.0, 0.7, 0.3) * 2.0);\n    \n    // Create a color transition effect using HSL colors\n    vec3 color1 = hsl(t1 * 0.5 + 0.5, 0.8, 0.6);\n    vec3 color2 = hsl((t2 * 0.5 + 0.5) + sin(iTime * 0.5), 0.8, 0.6);\n    \n    // Mix the colors based on position and time\n    float mixAmount = turbulent(vec3(uv * 10.0, iTime)) * 0.5 + 0.5;\n    vec3 finalColor = mix(color1, color2, mixAmount);\n    \n    return vec4(finalColor, 1.0);\n}"
+}
