@@ -1,5 +1,5 @@
 import*as app from "./renderer.js"
-let {renderer, scene, camera, onShaderError, events} = app;
+let {renderer, scene, camera, onShaderError, events, noiseTexture,noiseMaterial} = app;
 
 
 import generators from "./generators.js"
@@ -64,7 +64,7 @@ stopButton.addEventListener('click', (e) => {
 );
 
 let badFiles = []
-import {previewShader, plane, addPreviewer, defaultMaterial, previewShaderMap} from "./generators/shaders/previewer.js"
+import {previewShader, plane, addPreviewer, previewShaderMap} from "./generators/shaders/previewer.js"
 
 onShaderError.fn = (errorInfo) => {
 
@@ -125,7 +125,7 @@ async function send({message, system, onResult, onShaderCompiled, onShaderCrashe
     shaderError = (errorInfo) => {
 
         plane.material.dispose();
-        plane.material = defaultMaterial;
+        plane.material = noiseMaterial;
         saveBtn.style.display = 'none';
         shaderCrashed = true;
         plane.onBeforeRender = saveCB;

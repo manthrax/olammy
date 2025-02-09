@@ -1,30 +1,10 @@
 import*as app from "./../../renderer.js"
 import generators from "./../../generators.js"
-let {THREE, scene, camera, controls, events, renderer} = app;
+let {THREE, scene, camera, controls, events, renderer, noiseMaterial} = app;
 
 
 let canvas = renderer.domElement;
 
-let buf = new Float32Array(96*96*4);
-for(let i=0;i<buf.length;i++){
-    buf[i]=Math.random();
-
-    if((i%4)==3)buf[i]=1;
-    /*
-    {
-        buf[i-3] *= buf[i]
-        buf[i-2] *= buf[i]
-        buf[i-1] *= buf[i]
-    }
-   */
-} 
-
-let noiseTexture = new THREE.DataTexture(buf,96,96);
-//let noiseTexture = new THREE.TextureLoader().load('./noise.png')
-noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
-let defaultMaterial = new THREE.MeshBasicMaterial({
-    map: noiseTexture
-});
 
 
 let timeScale = 1.;
@@ -47,7 +27,7 @@ let sharedUniforms = {
         value: 0
     },
     iChannel0: {
-        value: defaultMaterial.map
+        value: noiseMaterial.map
     }
 }
 
@@ -64,7 +44,7 @@ let previewShader = (func, vertexFn, fragmentFn) => {
     })
 }
 
-let planeMaterial = defaultMaterial;
+let planeMaterial = noiseMaterial;
 let plane = new THREE.Mesh(new THREE.PlaneGeometry(),planeMaterial);
 plane.frustumCulled = false;
 scene.add(plane);
@@ -280,4 +260,4 @@ events.listen('frame', () => {
     
 }
 )
-export {previewShader, plane, addPreviewer, defaultMaterial, previewShaderMap}
+export {previewShader, plane, addPreviewer, previewShaderMap}

@@ -55,27 +55,9 @@ ${(await (await fetch("./renderer.js")).text()).split('export')[0]}
   
   let effect2=\`${content}\`;
 
-
-  
   let globalTime = 0;
   let lastTime;
     
-    let buf = new Float32Array(96*96*4);
-    for(let i=0;i<buf.length;i++){
-        buf[i]=Math.random();
-        if((i%4)==3){
-            buf[i-3] *= buf[i]
-            buf[i-2] *= buf[i]
-            buf[i-1] *= buf[i]
-        }
-    }
-
-    
-    let noiseTexture = new THREE.DataTexture(buf,96,96);
-  noiseTexture.wrapS = noiseTexture.wrapT = THREE.RepeatWrapping;
-  let defaultMaterial = new THREE.MeshBasicMaterial({
-      map: noiseTexture
-  });
 
   let sharedUniforms = {
       iTime: {
@@ -85,7 +67,7 @@ ${(await (await fetch("./renderer.js")).text()).split('export')[0]}
           value: 0
       },
       iChannel0: {
-          value: defaultMaterial.map
+          value: noiseMaterial.map
       }
   }
   
