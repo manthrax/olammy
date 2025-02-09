@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create flowing wave patterns using sine functions combined with time\n    float waveX = sin(uv.x * 10.0 + iTime) * 0.5;\n    float waveY = cos(uv.y * 10.0 + iTime) * 0.5;\n    \n    // Combine waves and add turbulence for more dynamic movement\n    float flow = sin(waveX + waveY + turbulent(vec2(uv.x * 5.0, uv.y * 5.0)));\n    \n    // Create rainbow effect using HSL colors\n    vec3 color = hsl(flow * pi + iTime, 1.0, 0.5);\n    \n    return vec4(color, 1.0);\n}"
+}

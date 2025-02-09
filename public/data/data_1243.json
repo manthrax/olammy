@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Scale UV coordinates to create a grid pattern\n    vec2 gridUV = uv * 10.0;\n    \n    // Get cell position in grid\n    vec2 cellPos = mod(gridUV, 1.0);\n    \n    // Calculate pulsing effect using time and sine function\n    float pulse = sin(iTime * 0.5 + cellPos.x * 3.1415926) * 0.5 + 0.5;\n    \n    // Create color based on mouse position and grid pattern\n    vec3 baseColor = hsl2rgb(vec3(pulse, 0.7, 0.5));\n    \n    // Add noise to create more dynamic effect\n    float noiseValue = noise(cellPos * 10.0 + iTime);\n    \n    // Combine colors and noise for final output\n    vec3 finalColor = baseColor * (0.5 + noiseValue * 0.5);\n    \n    return vec4(finalColor, 1.0);\n}"
+}

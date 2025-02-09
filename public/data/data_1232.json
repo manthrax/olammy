@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Rotate coordinates with time\n    float t = iTime * 0.5;\n    vec2 rotated = uv * mat2(cos(t), sin(-t), sin(t), cos(t));\n    \n    // Add noise and sine variation\n    vec2 st = rotated * 10.0 + vec2(sin(iTime) * 3.0, cos(iTime) * 3.0);\n    float n = noise(st * 0.5 + iTime);\n    \n    // Create color variations using HSL\n    vec3 color;\n    color.x = sin(rotated.x * 10.0 + t) * 0.5 + 0.5;\n    color.y = sin(rotated.y * 10.0 + t * 2.0) * 0.5 + 0.5;\n    color.z = n * 0.5 + 0.5;\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(vec3(color.x, color.y, color.z)), 1.0);\n}"
+}
