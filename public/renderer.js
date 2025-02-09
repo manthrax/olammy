@@ -60,9 +60,17 @@ let events = {
 let onFrame = {fn:()=>{}}
 let {width, height} = canvas;
 renderer.setAnimationLoop( (dt) => {
-    let containerBounds = canvas.parentElement.getClientRects()[0];
-    if ((containerBounds.width !== width) || (containerBounds.height !== height)) {
-        renderer.setSize(width = containerBounds.width, height = containerBounds.height, true);
+    const container = canvas.parentElement;
+   // let containerBounds = canvas.parentElement.getClientRects()[0];
+      //const w = containerBounds.width;
+     //const h = containerBounds.height
+      const w = container.clientWidth;
+      const h = container.clientHeight
+    
+    if ((w !== width) || (h !== height)) {
+
+        
+        renderer.setSize(width = w, height = h, true);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
     }

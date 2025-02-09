@@ -16,30 +16,23 @@ const fullHtml = `<!DOCTYPE html>
   <meta property="og:url" content="https://manthrax.github.io/olammy/public/index.html">
   
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0; 
-      padding: 0;
-      border: 0;
-    }
-  body {
-      font-family: 'Courier New', Courier, monospace;  /* Monospaced font for code */
-      white-space: pre-wrap;  /* Maintains whitespace formatting */
-      word-wrap: break-word;  /* Ensures long lines do not overflow */
-      overflow: hidden;
+    html, body {
       width:100%;
       height:100%;
-  }
+      margin: 0; 
+      padding: 0;
+      overflow: hidden;
+    }
   #left-pane{
       width:100%;
       height:100%;
-      display: flex;
-      flex-direction: row;
+      position: relative;
   }
-   #three-canvas{
-      width:100%;
-      height:100%;
-   
+   #three-canvas{   
+        width: 100%;
+        height: 100%;
+        display: block; /* remove inline scrollbars in some browsers */
+
    }
   
   </style>
@@ -58,7 +51,7 @@ const fullHtml = `<!DOCTYPE html>
 <canvas id="three-canvas"></canvas>
 </div>
 <script type='module'>
-${(await (await fetch("./../../renderer.js")).text()).split('export')[0]}
+${(await (await fetch("./renderer.js")).text()).split('export')[0]}
   
   let effect2=\`${content}\`;
 

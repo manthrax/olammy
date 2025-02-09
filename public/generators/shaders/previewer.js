@@ -115,6 +115,8 @@ controls.mouseButtons.LEFT = 2;
 controls.zoomToCursor = true;
 // Track mouse position
 let mouse = new THREE.Vector2();
+let clickMouse = new THREE.Vector2();
+
 let mouseNDC = new THREE.Vector2();
 
 let clickPlane = new THREE.Mesh(new THREE.PlaneGeometry(1000,1000));
@@ -142,10 +144,9 @@ canvas.addEventListener("pointerdown", (e) => {
     buttons = e.buttons;
     if (e.target !== renderer.domElement) 
         canvasIsTarget = false;
-
     else
         canvasIsTarget = true;
-
+    clickMouse.copy(mouse);
 }
 )
 canvas.addEventListener("pointerenter", (e) => {
@@ -189,6 +190,25 @@ let mouseDragViewport=()=>{
 
 }
 
+let selectedPreviewer;
+let updateSelection=()=>{
+
+    let prv = previewers.slice();
+    prv.forEach(a => a.cursorDistance = a.mesh.position.distanceTo(worldCursor));
+    prv.sort( (a, b) => a.cursorDistance - b.cursorDistance);
+    let p = prv[0];
+    if (p && (p.cursorDistance<1) && (prevButtons==1) && (selectedPreviewer!==prv[0])) {
+        document.getElementById('info-panel').innerText = prv[0].fileName;
+        selectedPreviewer=prv[0];
+        events.dispatch('artifact-selected', prv[0]);
+        selectionPlane.visible = true;
+    }else{
+        selectedPreviewer = undefined;
+        events.dispatch('artifact-selected', undefined);
+        selectionPlane.visible = false;
+    }
+}
+
 let mouseScroll = () => {
 
     if (!canvasIsTarget)
@@ -209,6 +229,10 @@ let mouseScroll = () => {
         mouseDragViewport();
     
     if (!buttons) {
+        if(prevButtons){
+            if(clickMouse.distanceTo(mouse)<5)
+                updateSelection()
+        }
         prevButtons = null;
         return
     }
@@ -224,18 +248,6 @@ let mouseScroll = () => {
 
     if (!prevButtons) {
         prevButtons = buttons;
-        let prv = previewers.slice();
-        prv.forEach(a => a.cursorDistance = a.mesh.position.distanceTo(worldCursor));
-        prv.sort( (a, b) => a.cursorDistance - b.cursorDistance);
-        let p = prv[0];
-        if (p && (p.cursorDistance<1) && (buttons==1)) {
-            document.getElementById('info-panel').innerText = prv[0].fileName;
-            events.dispatch('artifact-selected', prv[0]);
-            selectionPlane.visible = true;
-        }else{
-            events.dispatch('artifact-selected', undefined);
-            selectionPlane.visible = false;
-        }
     }
 
 }
