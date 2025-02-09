@@ -1,10 +1,15 @@
-Checkout the gallery online here:
+*** Checkout the gallery online here: ***
 
 https://manthrax.github.io/olammy/public/index.html
 
+*** To just mess with the shaders themselves in isolation ***
 
+public/data.json ---- Contains the list of shader names
+public/data/     ---- Contains the fragment shaders themselves.
 
-To run the whole thing locally...
+If you save one of the shaders from the viewer, you will get a standalone HTML that you can plug other shaders into.
+
+*** To run the whole thing locally... ***
 
 Install ollama ...
 
