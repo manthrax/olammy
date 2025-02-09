@@ -289,7 +289,8 @@ async function sendMessage(message = userInput.innerText.trim(), generator=activ
         let p = {
             src: glslElement.innerText,
         }
-        addPreviewer(p.src);
+        let prv = addPreviewer(p.src);
+        prv.mesh.frustumCulled = true;
         uploadJSON(p);
         
         doRandomGen(result)
@@ -368,6 +369,10 @@ let galleryDir = await (await fetch("./data.json")).json();
 //console.log("gallery files:",galleryDir.length);
 let fraggles = {}
 
+function setFrustumCulled(){
+    this.onBeforeCompile = undefined;
+    this.frustumCulled = true;
+}
 let parse=async (fraggle)=>{
     let f = fraggle.fileName;
     if (fraggles[fraggle.src]) {
@@ -383,6 +388,8 @@ let parse=async (fraggle)=>{
         }else{
             previewer.fileName = fraggle.fileName;
             artifacts[fraggle.fileName] = fraggle;
+            previewer.mesh.onBeforeRender = setFrustumCulled;
+
         }
     }
 }
