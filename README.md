@@ -1,4 +1,8 @@
+Checkout the gallery online here:
+
 https://manthrax.github.io/olammy/public/index.html
+
+
 
 To run the whole thing locally...
 
