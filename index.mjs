@@ -99,15 +99,25 @@ app.get('/models', async (req, res) => {
 });
 
 // ------------------- File Upload & Listing -------------------
-const uploadDir = 'public/data'; // or 'data/'
+const uploadDir = 'public/data'; // or 'data/'    
+const fileMap = {};
 
 // Rebuild data.json with updated directory listing
 async function rebuildDirectoryJSON() {
   try {
+    console.log("REBUILDING CACHE")
     const directoryPath = join(__dirname, uploadDir);
     const files = await fs.readdir(directoryPath);
     const outputPath = join(__dirname, 'public', 'data.json');
+    
     await fs.writeFile(outputPath, JSON.stringify(files, null, 2), 'utf8');
+
+    for(let i=0;i<files.length;i++){
+       let contents = await fs.readFile(join(__dirname, 'public/data',files[i]), 'utf8');
+       fileMap[files[i]]=JSON.parse(contents);
+    }
+    // Write the final object to data.json
+    await fs.writeFile(outputPath, JSON.stringify(fileMap, null, 2), 'utf8');
     console.log('File list saved to data.json successfully.');
   } catch (err) {
     console.error('Error processing directory:', err);

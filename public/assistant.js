@@ -53,6 +53,7 @@ repairButton.addEventListener('click', (e) => {
     }
 }
 );
+
 stopButton.addEventListener('click', (e) => {
     stopButton.style.display = 'none';
     if (conversation) {
@@ -364,42 +365,50 @@ let artifacts = {}
 
 let galleryDir = await (await fetch("./data.json")).json();
 //[];//await (await fetch("/files")).json()
-console.log("gallery files:",galleryDir.length);
+//console.log("gallery files:",galleryDir.length);
 let fraggles = {}
 
-
-let load = async (f, i) => {
-    try{
-    let fraggle = await (await fetch("data/" + f)).json()
+let parse=async (fraggle)=>{
+    let f = fraggle.fileName;
     if (fraggles[fraggle.src]) {
-        console.log("Found duplicate:", f)
+        console.log("Found duplicate:", fraggle.fileName)
 
-        badFiles.push(f);
+        badFiles.push(fraggle.fileName);
     } else {
         fraggles[fraggle.src] = f;
         let previewer = addPreviewer(fraggle.src)
         if(!previewer){
             console.log("Bad artifact:",f);
-            badFiles.push(f);
+            badFiles.push(fraggle.fileName);
         }else{
-            previewer.fileName = f;
-            artifacts[f] = fraggle;
+            previewer.fileName = fraggle.fileName;
+            artifacts[fraggle.fileName] = fraggle;
         }
     }
-    if (i == galleryDir.length - 1) {
-        //console.log(JSON.stringify(artifacts))
-    }
+}
+
+let load = async (f, i) => {
+    try{
+        let fraggle = await (await fetch("data/" + f)).json()
+        parse(fraggle)
     }
     catch(e){
         console.warn(e);
     }
 }
 
-let proms = galleryDir.map((f,i)=>load(f,i));
+let k = Object.keys(galleryDir);
+k.forEach(key =>{
+    galleryDir[key].fileName = key;
+    parse(galleryDir[key]);
+});
 
-await Promise.all(proms);
+//let proms = galleryDir.map((f,i)=>load(f,i));
+//await Promise.all(proms);
+
 
 console.log("Fraggles all loaded...")
+    
 /*
 for(let i=0;i<galleryDir.length;i++)
     await load(galleryDir[i],i);

@@ -76,6 +76,7 @@ let previewCount = 0;
 let previewShaderMap = {}
 let galleryBounds = new THREE.Box3();
 let tileSpacing = 1.1
+let previewerQueue=[]
 let addPreviewer = (e) => {
     let shader;
     if (e.indexOf("Effect3") >= 0)
@@ -94,7 +95,8 @@ let addPreviewer = (e) => {
     let row = (previewCount / 15) | 0
     p.position.x = (col + 1) * tileSpacing;
     p.position.y = (row + 1) * tileSpacing;
-    scene.add(p);
+    
+    previewerQueue.push(p);
     let prv = {
         mesh: p
     }
@@ -260,6 +262,10 @@ events.listen('frame', () => {
         let p = previewers[i];
         p.mesh.visible = distMax(p.mesh.position,controls.target) < 10;
     }
+
+   if(previewerQueue.length) scene.add(previewerQueue.shift());
+
+    
 }
 )
 export {previewShader, plane, addPreviewer, defaultMaterial, previewShaderMap}
