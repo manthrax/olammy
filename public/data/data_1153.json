@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create pulsating grid pattern using sine waves\n    vec2 st = uv * 10.0; // Scale UV coordinates\n    \n    // Add time-based oscillation\n    float time = iTime * 0.5;\n    \n    // Calculate grid lines with pulsing effect\n    float xLine = sin(st.x + time) * cos(time);\n    float yLine = cos(st.y + time) * sin(time);\n    \n    // Combine lines and add turbulence for dynamic effect\n    float pattern = sin(xLine + yLine + time) * 0.5 + 0.5;\n    pattern += turbulent(vec2(st.x, st.y)) * 0.3;\n    \n    // Create color shift over time using HSL\n    vec3 color = hsl(pattern * 360.0, 1.0, 0.5);\n    color = hsl2rgb(color);\n    \n    return vec4(color, 1.0);\n}"
+}

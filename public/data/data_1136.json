@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Scale UV coordinates and add time-based movement\n    vec2 st = uv * 4.0 + iTime;\n    \n    // Create a turbulent noise pattern\n    float t1 = turbulent(st);\n    \n    // Add another layer of turbulence with offset\n    float t2 = turbulent(st + vec2(1.5, 3.2));\n    \n    // Combine turbulence values and scale for color transitions\n    float hue = (t1 + t2 * 0.5) * 0.5;\n    \n    // Create smooth color transitions using HSL to RGB conversion\n    vec3 color = hsl2rgb(vec3(hue, 0.7, 0.6));\n    \n    return vec4(color, 1.0);\n}"
+}

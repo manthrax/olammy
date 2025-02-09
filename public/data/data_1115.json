@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create pulsing effect by scaling UV coordinates over time\n    vec2 st = uv * 10.0;\n    float scale = sin(iTime * 0.5 + length(uv)) * 0.5 + 0.5;\n    vec2 pos = (st - floor(st)) * scale + fract(vec2(iTime) * 0.3);\n    \n    // Generate grid pattern with noise\n    float noiseVal = noise(pos * 0.5 + iTime);\n    float grid = abs(sin(pos.x * pi) * sin(pos.y * pi));\n    \n    // Create color shifts using HSL to RGB conversion\n    vec3 color = hsl2rgb(vec3(\n        mod(iTime * 0.1 + pos.x * 0.5, 1.0),\n        0.7,\n        0.6\n    ));\n    \n    // Add turbulence for dynamic movement\n    float turb = turbulent(pos * 0.5 + iTime);\n    color *= grid * (1.0 + turb * 0.3);\n    \n    return vec4(color, 1.0);\n}"
+}

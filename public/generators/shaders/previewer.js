@@ -86,6 +86,9 @@ let addPreviewer = (e) => {
         return;
 
     let p = plane.clone();
+    
+    p.frustumCulled = false;
+    
     p.material = shader;
     let col = previewCount % 15;
     let row = (previewCount / 15) | 0
@@ -121,6 +124,7 @@ let worldCursor = new THREE.Vector3();
 let buttons = 0;
 let canvasIsTarget;
 
+let canvasHasFocus = false;
 canvas.addEventListener("pointermove", (e) => {
     canvasIsTarget = (e.target === renderer.domElement);
     // To get mouse coords relative to the canvas
@@ -134,15 +138,21 @@ scene.add(selectionPlane)
 
 canvas.addEventListener("pointerdown", (e) => {
     buttons = e.buttons;
-    if (e.target !== renderer.domElement) {
+    if (e.target !== renderer.domElement) 
         canvasIsTarget = false;
-        return
-    } else
+
+    else
         canvasIsTarget = true;
 
 }
 )
+canvas.addEventListener("pointerenter", (e) => {
+    canvasHasFocus=true;
 
+})
+canvas.addEventListener("pointerleave", (e) => {
+    canvasHasFocus=false;
+})
 window.addEventListener("pointerup", (e) => {
     buttons = e.buttons;
 }
@@ -180,6 +190,9 @@ let mouseDragViewport=()=>{
 let mouseScroll = () => {
 
     if (!canvasIsTarget)
+        return
+
+    if (!canvasHasFocus)
         return
 
     

@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a moving pattern by combining UV and time with sine functions\n    vec2 st = uv + sin(iTime * 0.5 + uv.x * pi) * 0.5;\n    \n    // Generate two different color variations using HSL\n    vec3 c1 = hsl(\n        sin(st.x * 5.0 + iTime) * 0.5 + 0.5,\n        abs(noise(vec2(uv.x, uv.y))) * 0.7 + 0.3,\n        0.6\n    );\n    \n    vec3 c2 = hsl(\n        sin(st.y * 5.0 + iTime * 3.0) * 0.5 + 0.5,\n        abs(noise(vec2(uv.y, uv.x))) * 0.7 + 0.3,\n        0.6\n    );\n    \n    // Mix the colors with a time-based blend\n    float blend = sin(iTime * 0.1 + uv.x * pi) * 0.5 + 0.5;\n    vec3 finalColor = mix(c1, c2, blend);\n    \n    return vec4(hsl2rgb(finalColor), 1.0);\n}"
+}

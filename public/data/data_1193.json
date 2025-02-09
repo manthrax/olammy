@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Center the coordinates\n    vec2 centered = uv - 0.5;\n    \n    // Calculate distance from center\n    float r = length(centered);\n    \n    // Create pulsating circles using time\n    float circle = r + sin(iTime) * 0.5 + iTime * 0.5;\n    \n    // Generate color with shifting hues\n    vec3 color = hsl2rgb(vec3(\n        (circle * 10.0 + iTime) * 0.1,   // Hue\n        0.7,                              // Saturation\n        0.8                               // Lightness\n    ));\n    \n    // Create pulsating alpha based on distance and time\n    float alpha = sin(circle * pi);\n    \n    return vec4(color, alpha);\n}"
+}

@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Calculate position relative to center\n    vec2 pos = uv - 0.5;\n    \n    // Convert to polar coordinates\n    float angle = atan2(pos.y, pos.x);\n    float radius = length(pos);\n    \n    // Add time-based rotation\n    angle += iTime * 0.5; // Adjust speed by changing 0.5\n    \n    // Create smooth color transitions using HSL\n    vec3 hslColor;\n    hslColor.x = fract(angle / (2.0 * PI) + 0.5); // Hue based on angle\n    hslColor.y = 1.0;                            // Full saturation\n    hslColor.z = 0.5 + turbulent(vec2(radius)) * 0.4; // Add noise to value\n    \n    // Convert HSL to RGB and output\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
+}

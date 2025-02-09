@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create rotating patterns using sine waves\n    vec2 st = uv * 5.0 + vec2(sin(iTime)*3.0, cos(iTime)*3.0);\n    \n    // Add time-based rotation\n    float angle = iTime * 0.1;\n    st = mat2(cos(angle), -sin(angle),\n              sin(angle), cos(angle)) * st;\n    \n    // Create color transitions using HSL\n    vec3 color = hsl2rgb(vec3(0.5 + sin(iTime + st.x) * 0.5,\n                              0.7, 0.8));\n    \n    // Add noise and turbulence for depth\n    float turb = turbulent(st);\n    color *= 1.0 - turb * 0.5;\n    \n    return vec4(color, 1.0);\n}"
+}

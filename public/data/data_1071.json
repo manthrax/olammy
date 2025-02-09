@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Create a base frequency using UV coordinates and time\n    float freq = 4.0 * pi;\n    \n    // Create undulating patterns using sine functions\n    float pattern1 = sin(uv.x * freq + iTime * 2.0);\n    float pattern2 = sin(uv.y * freq - iTime * 2.0);\n    \n    // Combine the patterns with noise for more complexity\n    float combined = (pattern1 + pattern2) / 2.0;\n    combined += turbulent(vec3(uv, iTime)) * 0.5;\n    \n    // Create a color gradient using HSL conversion\n    vec3 color = hsl(\n        fract(combined * 0.5 + iTime * 0.1) * 360.0,\n        0.7,\n        0.5\n    );\n    \n    // Convert to RGB and output\n    return vec4(hsl2rgb(color), 1.0);\n}"
+}

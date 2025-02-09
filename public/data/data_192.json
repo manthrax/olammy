@@ -1,3 +1,0 @@
-{
-  "src": "vec4 Effect2(vec2 uv) {\n    vec2 timeMove = sin(iTime * 0.5) * vec2(3., 1.);\n    vec2 lightPos = vec2(sin(iTime), cos(iTime)) * 0.5 + timeMove;\n    \n    vec2 dist = uv - lightPos;\n    float d = length(dist);\n    \n    float f = turbulent(vec2(uv.x * 10. + iTime, uv.y * 10. + iTime));\n    f *= sin(d * 3.) * 0.5 + 0.5;\n    \n    vec3 color = hsl2rgb(vec3(f * 0.5 + 0.5, 1., 0.8));\n    \n    return vec4(color, 1.);\n}"
-}

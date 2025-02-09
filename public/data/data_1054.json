@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Scale UV coordinates for grid pattern\n    vec2 st = uv * 10.0;\n    \n    // Create grid lines using sine functions\n    float xLine = sin(st.x + iTime) * 0.5 + 0.5;\n    float yLine = sin(st.y + iTime) * 0.5 + 0.5;\n    \n    // Combine lines and add turbulence\n    float grid = min(xLine, yLine);\n    grid += turbulent(vec2(uv * 10.0 + iTime));\n    \n    // Create color transitions using HSL\n    vec3 color = hsl2rgb(vec3(\n        sin(iTime * 0.5 + st.x) * 0.5 + 0.5,\n        0.7,\n        0.6\n    ));\n    \n    return vec4(color * grid, 1.0);\n}"
+}

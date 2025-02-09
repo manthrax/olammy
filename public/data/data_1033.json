@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Combine time with pixel position for dynamic patterns\n    vec3 p = vec3(uv * 2.0 - 1.0, sin(iTime * 0.5));\n    \n    // Generate noise values at different scales\n    float n1 = noise(p);\n    float n2 = noise(p * 10.0 + iTime);\n    float t = turbulent(p * 3.0 + iTime);\n    \n    // Create pulsating color shifts using HSL\n    vec3 hslColor = vec3(\n        (n1 + sin(iTime) * 0.5 + 0.5) * 240.0,  // Hue variation over time and space\n        abs(n2) * 0.7 + 0.3,                       // Saturation modulation\n        abs(t) * 0.6 + 0.4                         // Brightness pulsation\n    );\n    \n    // Convert HSL to RGB and output\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
+}

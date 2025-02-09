@@ -512,11 +512,18 @@ events.listen('artifact-selected',(p)=>{
     if(!p.fileName)
         return;
     let a = artifacts[p.fileName]
-    infoPanel.innerHTML += `<button id="save-info">💾</button><button id="close-info">⛔</button></br>
+    infoPanel.innerHTML += `<button id="save-info">💾</button><button id="close-info">⛔</button><button id="delete-effect">☠️</button></br>
 `+a.src;
     //infoPanel.innerText += "\n"+a.src;
     document.getElementById('close-info').addEventListener('click',(e)=>{
         infoPanel.innerHTML=infoPanel.innerText='';
+    })
+    document.getElementById('delete-effect').addEventListener('click',(e)=>{
+        let a = artifacts[p.fileName];
+        if(confirm("Delete this effect :"+p.fileName+"?")){
+            deleteFile(p.fileName);
+            infoPanel.innerHTML=infoPanel.innerText='';
+        }
     })    
     document.getElementById('save-info').addEventListener('click',(e)=>{
         let a = artifacts[p.fileName];

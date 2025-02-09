@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Convert UV coordinates to polar coordinates\n    float theta = atan2(uv.y, uv.x);\n    float r = length(uv * 1.5); // Scale radius for better pattern spacing\n    \n    // Add time-based rotation and create a rotating color effect\n    theta += iTime * 0.5;\n    \n    // Use turbulence to add dynamic noise patterns\n    float turb = turbulent(vec2(theta, r));\n    \n    // Create HSL color based on polar coordinates and time\n    vec3 hslColor = vec3(\n        (theta + iTime) * 0.1,\n        0.7 + turb * 0.3,\n        0.5 + sin(r * 4.0 + iTime) * 0.5\n    );\n    \n    // Convert HSL to RGB and output\n    return vec4(hsl2rgb(hslColor), 1.0);\n}"
+}

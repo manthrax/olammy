@@ -1,0 +1,3 @@
+{
+  "src": "vec4 Effect2(vec2 uv) {\n    // Offset UV coordinates based on time for rotation effect\n    vec2 offset = vec2(sin(iTime), cos(iTime)) * 0.5;\n    vec2 st = uv + offset;\n    \n    // Create a base color using HSL with time-based hue\n    vec3 color = hsl(st.x * pi + iTime, 1.0, 0.5);\n    \n    // Add turbulent noise to create dynamic variations\n    float noiseValue = turbulent(vec2(st.x * 100.0, st.y * 100.0));\n    color += vec3(noiseValue * 0.5);\n    \n    return vec4(color, 1.0);\n}"
+}
